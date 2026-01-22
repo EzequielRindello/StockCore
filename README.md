@@ -16,35 +16,44 @@ StockCore is a web-based Inventory Management System built using **ASP.NET Core 
 
 ---
 
-## Application Scope (Current)
-
-### Included
-
-* Base MVC project structure
-* Controllers with defined routes
-* Razor views for each route
-* Shared layout and navigation
-
-### Not Included Yet
-
-* Database or Entity Framework
-* Business logic
-* Authentication / authorization
-* CRUD operations
-* Deployment configuration
-
----
-
 ## Application Purpose
 
-The application is intended to manage inventory for a small business or internal team. At a high level, it will allow users to:
+StockCore is designed for small business owners or team members responsible for managing inventory.
+All users act as administrators of the system and can fully manage the available data.
 
-* Manage products
-* Manage categories
-* Track stock movements (in/out)
-* View current inventory status
+The application allows users to:
 
-At this stage, these features are **defined conceptually only** and represented by routes and views.
+Create and manage products
+
+Organize products into categories
+
+Register stock entries and outputs
+
+View real-time inventory status
+
+Track stock movement history
+
+Securely log in and manage their session
+
+The system centralizes inventory management and replaces manual spreadsheets or paper-based tracking with a structured digital solution.
+
+## Core Features
+
+### Users can:
+
+Create an account and log in securely
+
+Create, edit, and delete products
+
+Create, edit, and delete categories
+
+Register stock entries (incoming stock)
+
+Register stock outputs (outgoing stock)
+
+View current stock levels per product
+
+View historical stock movements
 
 ---
 
@@ -106,6 +115,23 @@ Authentication is represented at the routing level only. These routes exist as p
 | `/Logout`   | Logout   | Logout endpoint placeholder |
 
 ---
+## Project Structure
+
+StockCore
+├── Controllers/        → Application controllers
+├── Dtos/				→ Dtos for service
+├── Entities/			→ Tables and relations
+├── Data/               → Entity Framework DbContext
+├── Services/           → Business logic
+├── Views/              → Razor views
+│   └── Shared/         → Layout and shared components
+├── Migrations/         → EF Core migrations
+├── wwwroot/            → Static assets (CSS, JS)
+├── Program.cs          → Application entry point
+├── appsettings.json    → Configuration
+└── StockCore.csproj
+
+---
 
 ## Navigation
 
@@ -116,16 +142,6 @@ The main navigation menu provides access to:
 * Categories
 * Stock
 * Login
-
-Navigation uses **ASP.NET Core Tag Helpers** (`asp-controller`, `asp-action`) to ensure routing safety and maintainability.
-
----
-
-## Project Structure (Relevant Folders)
-
-* `Controllers/` – MVC controllers defining routes (Home, Products, Categories, Stock, Account)
-* `Views/` – Razor views organized by controller name
-* `Views/Shared/` – Layout and shared UI components
-* `wwwroot/` – Static assets (CSS, JS, libraries)
+* Profile
 
 ---

@@ -1,4 +1,4 @@
-namespace StockCore.Models
+namespace StockCore.Dtos
 {
     public class ErrorViewModel
     {
