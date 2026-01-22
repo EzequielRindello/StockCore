@@ -1,6 +1,6 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using StockCore.Models;
+using StockCore.Dtos;
+using System.Diagnostics;
 
 namespace StockCore.Controllers
 {

@@ -1,4 +1,4 @@
-﻿namespace StockCore.Models.Enums
+﻿namespace StockCore.Dtos.Enums
 {
     public enum StockMovementType
     {
