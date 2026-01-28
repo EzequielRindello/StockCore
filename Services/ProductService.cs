@@ -103,15 +103,16 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task<(string, string)> UpdateProduct(ProductForm model)
+    public async Task<(ProductForm, string, string)> UpdateProduct(ProductForm model)
     {
         await using var tx = await _db.Database.BeginTransactionAsync();
+
         try
         {
             var product = await _db.Products.FindAsync(model.Id);
 
             if (product == null)
-                return (ValidationMessages.ERROR, ValidationMessages.NotFound("Product"));
+                return (model, ValidationMessages.ERROR, ValidationMessages.NotFound("Product"));
 
             product.Name = model.Name;
             product.Description = model.Description;
@@ -122,12 +123,12 @@ public class ProductService : IProductService
             await _db.SaveChangesAsync();
             await tx.CommitAsync();
 
-            return (ValidationMessages.SUCCESS, ValidationMessages.SavedMessage("Product"));
+            return (model, ValidationMessages.SUCCESS, ValidationMessages.SavedMessage("Product"));
         }
         catch
         {
             await tx.RollbackAsync();
-            return (ValidationMessages.ERROR, ValidationMessages.ErrorMessage("saving", "product"));
+            return (model, ValidationMessages.ERROR, ValidationMessages.ErrorMessage("saving", "product"));
         }
     }
 

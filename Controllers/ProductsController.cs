@@ -37,8 +37,10 @@ public class ProductsController : Controller
     [HttpPost]
     public async Task<IActionResult> Edit(ProductForm model)
     {
-        TempData.Merge(await _service.UpdateProduct(model));
-        return RedirectToAction(nameof(Index));
+        var result = await _service.UpdateProduct(model);
+        TempData.Merge((result.key, result.message));
+
+        return View(result.model);
     }
 
     [HttpPost]
