@@ -1,49 +1,277 @@
+/* =========================================================
+   BASE / RESET
+========================================================= */
 html {
-  font-size: 14px;
+    font-size: 14px;
+    height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f6f9;
+    font-family: "Segoe UI", "Segoe UI Variable", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* Products view */
-.actions-btns{
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: none;
+}
+
+/* =========================================================
+   APP SHELL (MAIN LAYOUT)
+========================================================= */
+.app-shell {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* prevents global scroll */
+}
+
+/* =========================================================
+   HEADER / NAVBAR
+========================================================= */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* =========================================================
+   PRODUCTS PAGE LAYOUT
+   Sidebar + Content
+========================================================= */
+.products-layout {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+    /* Sidebar */
+    .products-layout .filters {
+        width: 280px;
+        background-color: #2f3542;
+        color: #ffffff;
+        overflow-y: auto;
+    }
+
+    /* Bootstrap grid overrides inside products layout */
+    .products-layout .row {
+        margin: 0;
+    }
+
+    .products-layout .col-3,
+    .products-layout .col-9 {
+        padding: 0;
+        max-width: none;
+        flex: none;
+    }
+
+    .products-layout .vh-100 {
+        height: auto !important;
+    }
+
+/* =========================================================
+   FILTER SIDEBAR CONTENT
+========================================================= */
+#filterForm {
+    padding: 20px;
+}
+
+    #filterForm h5,
+    #filterForm label {
+        color: #ffffff;
+    }
+
+    #filterForm .form-control,
+    #filterForm .form-select {
+        background-color: #404854;
+        border: none;
+        color: #ffffff;
+    }
+
+        #filterForm .form-control::placeholder {
+            color: #b0b6c3;
+        }
+
+    #filterForm .btn-primary {
+        background-color: #ff5c8a;
+        border: none;
+    }
+
+    #filterForm .btn-outline-secondary {
+        border-color: #b0b6c3;
+        color: #b0b6c3;
+    }
+
+/* Force full-width controls inside sidebar */
+.products-layout .filters .col-3 {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.products-layout .filters .btn {
+    width: 100%;
+}
+
+/* =========================================================
+   MAIN CONTENT AREA
+========================================================= */
+.products-layout .content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto; 
+}
+
+/* =========================================================
+   ACTION BUTTONS (TOP RIGHT)
+========================================================= */
+.actions-btns {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-}
-.actions-btns a,button{
-    margin: 2px;
+    margin-bottom: 12px;
 }
 
-/* Toast */
+    .actions-btns a,
+    .actions-btns button {
+        margin-left: 6px;
+    }
+
+    .actions-btns .btn-danger {
+        background-color: #ff5c8a;
+        border: none;
+    }
+
+/* =========================================================
+   TABLES (PRODUCT LIST)
+========================================================= */
+#productTable {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+thead th {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: #8b8f9c;
+    border-bottom: none;
+}
+
+tbody tr {
+    background-color: #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+tbody td {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+tbody tr:hover {
+    background-color: #f8f9fc;
+}
+
+/* =========================================================
+   TOAST NOTIFICATIONS
+========================================================= */
 .toast-container {
-    margin-top: 1.9%;
+    margin-top: 1.5%;
 }
 
-/* Footer */
-.footer {
+/* =========================================================
+   FORMS (CREATE / EDIT)
+========================================================= */
+.form-page {
+    max-width: 720px;
+    margin: 40px auto;
+}
+
+.form-card {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+    .form-card h2 {
+        margin-bottom: 20px;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+/* Form buttons */
+.form-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+/* =========================================================
+   DETAILS VIEW
+========================================================= */
+.detail-card {
+    max-width: 720px;
+    margin: 40px auto;
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+    .detail-card h2 {
+        margin-bottom: 16px;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+.detail-row {
+    margin-bottom: 8px;
+}
+
+    .detail-row b {
+        width: 120px;
+        display: inline-block;
+    }
+
+.detail-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+.custom-footer {
+    height: 30px;
+    background-color: dimgrey;
+    color: #ffffff;
     text-align: center;
-}
-.footer a{
-    text-decoration: none;
-    color: gray;
-}
-.footer a:hover {
-    text-decoration: underline;
+    line-height: 30px;
+    flex-shrink: 0;
 }
