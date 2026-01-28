@@ -1,0 +1,12 @@
+﻿@model ProductDetail
+
+<h2>@Model.Name</h2>
+
+<p><b>SKU:</b> @Model.Sku</p>
+<p><b>Category:</b> @Model.Category</p>
+<p><b>Description:</b> @Model.Description</p>
+<p><b>Stock:</b> @Model.Stock</p>
+<p><b>Active:</b> @Model.IsActive</p>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back</a>

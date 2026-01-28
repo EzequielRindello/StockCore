@@ -42,6 +42,51 @@
             </div>
         </nav>
     </header>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3 mt-2">
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="toast text-bg-success"
+                 role="alert"
+                 aria-live="assertive"
+                 aria-atomic="true">
+
+                <div class="toast-header text-bg-success">
+                    <strong class="me-auto">Success</strong>
+                    <button type="button"
+                            class="btn-close btn-close-white"
+                            data-bs-dismiss="toast"></button>
+                </div>
+
+                <div class="toast-body">
+                    @TempData["Success"]
+                </div>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="toast text-bg-danger"
+                 role="alert"
+                 aria-live="assertive"
+                 aria-atomic="true">
+
+                <div class="toast-header text-bg-danger">
+                    <strong class="me-auto">Error</strong>
+                    <button type="button"
+                            class="btn-close btn-close-white"
+                            data-bs-dismiss="toast"></button>
+                </div>
+
+                <div class="toast-body">
+                    @TempData["Error"]
+                </div>
+            </div>
+        }
+
+    </div>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
