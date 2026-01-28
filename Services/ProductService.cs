@@ -2,6 +2,7 @@
 using StockCore.Data;
 using StockCore.Dtos.Enums;
 using StockCore.Entities;
+using StockCore.Services.Const;
 using StockCore.Services.Interfaces;
 
 public class ProductService : IProductService
@@ -38,7 +39,7 @@ public class ProductService : IProductService
             .FirstOrDefaultAsync(p => p.Id == id);
 
         if (product == null)
-            throw new Exception("Product not found");
+            throw new Exception(ValidationMessages.NotFound("Product"));
 
         var stock = product.StockMovements.Sum(m =>
             m.MovementType == StockMovementType.In ? m.Quantity : -m.Quantity);
@@ -61,7 +62,7 @@ public class ProductService : IProductService
         var product = await _db.Products.FindAsync(id);
 
         if (product == null)
-            throw new Exception("Product not found");
+            throw new Exception(ValidationMessages.NotFound("Product"));
 
         return new ProductForm
         {
@@ -93,12 +94,12 @@ public class ProductService : IProductService
             await _db.SaveChangesAsync();
             await tx.CommitAsync();
 
-            return ("Success", "Product created successfully");
+            return (ValidationMessages.SUCCESS, ValidationMessages.CreatedMessage("Product"));
         }
         catch
         {
             await tx.RollbackAsync();
-            return ("Error", "Error creating product");
+            return (ValidationMessages.ERROR, ValidationMessages.ErrorMessage("creating", "product"));
         }
     }
 
@@ -110,7 +111,7 @@ public class ProductService : IProductService
             var product = await _db.Products.FindAsync(model.Id);
 
             if (product == null)
-                return ("Error", "Product not found");
+                return (ValidationMessages.ERROR, ValidationMessages.NotFound("Product"));
 
             product.Name = model.Name;
             product.Description = model.Description;
@@ -121,19 +122,19 @@ public class ProductService : IProductService
             await _db.SaveChangesAsync();
             await tx.CommitAsync();
 
-            return ("Success", "Product saved successfully");
+            return (ValidationMessages.SUCCESS, ValidationMessages.SavedMessage("Product"));
         }
         catch
         {
             await tx.RollbackAsync();
-            return ("Error", "Error saving product");
+            return (ValidationMessages.ERROR, ValidationMessages.ErrorMessage("saving", "product"));
         }
     }
 
     public async Task<(string, string)> DeleteManyProducts(List<int> ids)
     {
         if (ids == null || ids.Count == 0)
-            return ("Error", "No products selected");
+            return (ValidationMessages.ERROR, ValidationMessages.SelectedMessage("products"));
 
         await using var tx = await _db.Database.BeginTransactionAsync();
 
@@ -145,12 +146,12 @@ public class ProductService : IProductService
             await _db.SaveChangesAsync();
             await tx.CommitAsync();
 
-            return ("Success", "Products deleted successfully");
+            return (ValidationMessages.SUCCESS, ValidationMessages.DeletedMessage("Product"));
         }
         catch
         {
             await tx.RollbackAsync();
-            return ("Error", "Error deleting products");
+            return (ValidationMessages.ERROR, ValidationMessages.ErrorMessage("deleting", "product"));
         }
     }
 }
