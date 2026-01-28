@@ -4,58 +4,95 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - StockCore</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/StockCore.styles.css" asp-append-version="true" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
+
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">StockCore</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Products" asp-action="Index">Products</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Categories" asp-action="Index">Categories</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Stock" asp-action="Index">Stock</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Login" asp-action="Index">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+        <nav class="navbar navbar-expand-sm bg-white border-bottom px-4">
+            <div class="d-flex align-items-center w-100">
+
+                <!-- App icon / name -->
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="navbar-brand mb-0 me-4 text-decoration-none text-dark">
+                    <h1 class="mb-0" style="font-size: 1.25rem;">
+                        StockCore
+                    </h1>
+                </a>
+
+                <!-- Left menu -->
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Products" asp-action="Index">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Categories" asp-action="Index">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Stock" asp-action="Index">Stock</a>
+                    </li>
+                </ul>
+
+                <!-- User -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2"
+                           asp-controller="Login"
+                           asp-action="Index">
+                            <i class="bi bi-person-circle fs-5"></i>
+                            <span>Login</span>
+                        </a>
+                    </li>
+                </ul>
+
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        @if (TempData["Success"] != null)
+        {
+            <div class="toast text-bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header text-bg-success">
+                    <strong class="me-auto">Success</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body">@TempData["Success"]</div>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="toast text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header text-bg-danger">
+                    <strong class="me-auto">Error</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body">@TempData["Error"]</div>
+            </div>
+        }
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - StockCore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <div class="app-shell">
+        @RenderBody()
+    </div>
+
+    <footer class="custom-footer">
+        <div>
+            &copy; 2026 - StockCore - Version 1.0.1
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

@@ -1,0 +1,16 @@
+﻿@model ProductDetail
+
+<div class="detail-card">
+    <h2>@Model.Name</h2>
+
+    <div class="detail-row"><b>SKU:</b> @Model.Sku</div>
+    <div class="detail-row"><b>Category:</b> @Model.Category</div>
+    <div class="detail-row"><b>Description:</b> @Model.Description</div>
+    <div class="detail-row"><b>Stock:</b> @Model.Stock</div>
+    <div class="detail-row"><b>Active:</b> @Model.IsActive</div>
+
+    <div class="detail-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+</div>

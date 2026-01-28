@@ -1,0 +1,42 @@
+﻿@model ProductFormView
+
+<form method="post" class="form-card">
+    <input type="hidden" asp-for="Product.Id" />
+
+    <div class="mb-2">
+        <label asp-for="Product.Name"></label>
+        <input asp-for="Product.Name" class="form-control" />
+        <span asp-validation-for="Product.Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-2">
+        <label asp-for="Product.Description"></label>
+        <textarea asp-for="Product.Description" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-2">
+        <label asp-for="Product.Sku"></label>
+        <input asp-for="Product.Sku" class="form-control" />
+        <span asp-validation-for="Product.Sku" class="text-danger"></span>
+    </div>
+
+    <div class="mb-2">
+        <label asp-for="Product.CategoryId"></label>
+        <select asp-for="Product.CategoryId"
+                asp-items="Model.Categories"
+                class="form-select">
+            <option value="">Select category</option>
+        </select>
+    </div>
+
+    <div class="form-check mb-2">
+        <input asp-for="Product.IsActive" class="form-check-input" />
+        <label asp-for="Product.IsActive" class="form-check-label"></label>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+</form>
+

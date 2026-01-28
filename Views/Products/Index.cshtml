@@ -1,5 +1,94 @@
-﻿@{
-    ViewData["Title"] = "Products";
-}
+﻿@model List<ProductList>
 
-<h1>Products Page</h1>
+<div class="products-layout">
+
+    <!-- SIDEBAR -->
+    <div class="filters">
+        <div class="row">
+            <div class="col-3 border-start vh-100">
+                <form id="filterForm">
+                    <h5>Filters</h5>
+
+                    <div class="mb-3">
+                        <label>Search</label>
+                        <input class="form-control" name="Search" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Category</label>
+                        <select class="form-select"
+                                name="CategoryId"
+                                asp-items="ViewBag.Categories">
+                            <option value="">All</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Status</label>
+                        <select class="form-select" name="IsActive">
+                            <option value="">All</option>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mb-2">
+                        Search
+                    </button>
+
+                    <button type="button"
+                            id="clearFilters"
+                            class="btn btn-outline-secondary w-100">
+                        Clear filters
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+        <div class="actions-btns">
+            <button class="btn btn-secondary">Import CSV</button>
+            <button class="btn btn-secondary">Export</button>
+            <a asp-action="Create" class="btn btn-danger">
+                <i class="bi bi-plus"></i> Add product
+            </a>
+        </div>
+
+        <div id="productTable">
+            @await Html.PartialAsync("_ProductTable", Model)
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const tableContainer = document.getElementById("productTable");
+        const filterForm = document.getElementById("filterForm");
+
+        async function loadTable(formData) {
+            const res = await fetch("@Url.Action("Filter", "Products")", {
+                method: "POST",
+                body: formData
+            });
+
+            tableContainer.innerHTML = await res.text();
+
+            if (window.wireDeleteModal)
+                wireDeleteModal();
+        }
+
+        filterForm.addEventListener("submit", e => {
+            e.preventDefault();
+            loadTable(new FormData(filterForm));
+        });
+
+        document.getElementById("clearFilters").addEventListener("click", () => {
+            filterForm.reset();
+            loadTable(new FormData());
+        });
+    </script>
+}
