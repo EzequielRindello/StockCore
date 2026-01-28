@@ -21,8 +21,18 @@ body {
   margin-bottom: 60px;
 }
 
+/* Products view */
+.actions-btns{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.actions-btns a,button{
+    margin: 2px;
+}
+
 /* Toast */
-.toast-container{
+.toast-container {
     margin-top: 1.9%;
 }
 

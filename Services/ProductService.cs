@@ -14,6 +14,41 @@ public class ProductService : IProductService
         _db = context;
     }
 
+    public async Task<List<ProductList>> FilterProducts(ProductFilter filter)
+    {
+        var query = _db.Products
+            .Include(p => p.Category)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(filter.Search))
+        {
+            query = query.Where(p =>
+                p.Name.Contains(filter.Search) ||
+                p.Sku.Contains(filter.Search));
+        }
+
+        if (filter.CategoryId.HasValue)
+        {
+            query = query.Where(p => p.CategoryId == filter.CategoryId.Value);
+        }
+
+        if (filter.IsActive.HasValue)
+        {
+            query = query.Where(p => p.IsActive == filter.IsActive.Value);
+        }
+
+        return await query
+            .Select(p => new ProductList
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Sku = p.Sku,
+                Category = p.Category!.Name,
+                IsActive = p.IsActive
+            })
+            .ToListAsync();
+    }
+
     public async Task<List<ProductList>> GetAllProducts()
     {
         return await _db

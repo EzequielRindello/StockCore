@@ -3,6 +3,7 @@
     public interface IProductService
     {
         Task<List<ProductList>> GetAllProducts();
+        Task<List<ProductList>> FilterProducts(ProductFilter filter);
         Task<ProductDetail> GetDetail(int id);
         Task<ProductForm> GetForEdit(int id);
         Task<(string key, string message)> CreateProduct(ProductForm model);

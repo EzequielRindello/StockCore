@@ -14,10 +14,7 @@
         toastEl.className = `toast text-bg-${type}`;
         toastEl.role = "alert";
 
-        toastEl.innerHTML = `
-            <div class="toast-body">${message}</div>
-        `;
-
+        toastEl.innerHTML = `<div class="toast-body">${message}</div>`;
         container.appendChild(toastEl);
 
         const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
@@ -28,41 +25,40 @@
         });
     };
 
-   // Delete modal
+    wireDeleteModal();
+});
+
+// Modal
+window.wireDeleteModal = function () {
+
     const openDeleteBtn = document.getElementById("openDeleteModal");
     const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
     const modalElement = document.getElementById("confirmDeleteModal");
     const deleteForm = document.getElementById("deleteForm");
-    const checkboxes = document.querySelectorAll("input[name='ids']");
 
-    if (openDeleteBtn && confirmDeleteBtn && modalElement && deleteForm) {
+    if (!openDeleteBtn || !confirmDeleteBtn || !modalElement || !deleteForm)
+        return;
 
-        const deleteModal = new bootstrap.Modal(modalElement);
+    const deleteModal = new bootstrap.Modal(modalElement);
 
-        function updateDeleteButton() {
-            const anyChecked = document.querySelectorAll("input[name='ids']:checked").length > 0;
-            openDeleteBtn.disabled = !anyChecked;
-        }
-
-        updateDeleteButton();
-
-        checkboxes.forEach(cb => {
-            cb.addEventListener("change", updateDeleteButton);
-        });
-
-        openDeleteBtn.addEventListener("click", function () {
-            const checked = document.querySelectorAll("input[name='ids']:checked");
-
-            if (checked.length === 0) {
-                showToast("Please select at least one product", "danger");
-                return;
-            }
-
-            deleteModal.show();
-        });
-
-        confirmDeleteBtn.addEventListener("click", function () {
-            deleteForm.submit();
-        });
+    function updateDeleteButton() {
+        const anyChecked = document.querySelectorAll("input[name='ids']:checked").length > 0;
+        openDeleteBtn.disabled = !anyChecked;
     }
-});
+
+    updateDeleteButton();
+
+    document.querySelectorAll("input[name='ids']").forEach(cb => {
+        cb.addEventListener("change", updateDeleteButton);
+    });
+
+    openDeleteBtn.onclick = () => {
+        if (document.querySelectorAll("input[name='ids']:checked").length === 0) {
+            showToast("Please select at least one product", "danger");
+            return;
+        }
+        deleteModal.show();
+    };
+
+    confirmDeleteBtn.onclick = () => deleteForm.submit();
+};

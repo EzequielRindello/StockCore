@@ -1,66 +1,82 @@
 ﻿@model List<ProductList>
 
-<a asp-action="Create" class="btn btn-primary mb-2">Add product</a>
-<button class="btn btn-secondary mb-2">Import CSV</button>
-<button class="btn btn-secondary mb-2">Export</button>
+<div class="actions-btns">
+    <button class="btn btn-secondary mb-2">Import CSV</button>
+    <button class="btn btn-secondary mb-2">Export</button>
+    <a asp-action="Create" class="btn btn-danger mb-2">
+        <i class="bi bi-plus"></i> Add product
+    </a>
+</div>
 
-<form asp-action="DeleteMany" method="post" id="deleteForm">
-    <table class="table">
-        <thead>
-            <tr>
-                <th></th>
-                <th>Name</th>
-                <th>SKU</th>
-                <th>Category</th>
-                <th>Active</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var p in Model)
-            {
-                <tr>
-                    <td><input type="checkbox" name="ids" value="@p.Id" /></td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@p.Id">@p.Name</a>
-                    </td>
-                    <td>@p.Sku</td>
-                    <td>@p.Category</td>
-                    <td>@p.IsActive</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@p.Id">Edit</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<div class="row">
+    <div class="col-3 border-start vh-100">
+        <form id="filterForm">
+            <h5>Filters</h5>
 
-    <button type="button"
-            class="btn btn-danger"
-            id="openDeleteModal"
-            disabled>
-        Delete selected
-    </button>
-</form>
+            <div class="mb-3">
+                <label>Search</label>
+                <input class="form-control" name="Search" />
+            </div>
 
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-top">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Confirm delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="mb-3">
+                <label>Category</label>
+                <select class="form-select" name="CategoryId"
+                        asp-items="ViewBag.Categories">
+                    <option value="">All</option>
+                </select>
             </div>
-            <div class="modal-body">
-                Are you sure you want to delete the selected products?
+
+            <div class="mb-3">
+                <label>Status</label>
+                <select class="form-select" name="IsActive">
+                    <option value="">All</option>
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                </select>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    Cancel
-                </button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
-                    Delete
-                </button>
-            </div>
-        </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-2">
+                Search
+            </button>
+
+            <button type="button"
+                    id="clearFilters"
+                    class="btn btn-outline-secondary w-100">
+                Clear filters
+            </button>
+        </form>
+    </div>
+
+    <div class="col-9" id="productTable">
+        @await Html.PartialAsync("_ProductTable", Model)
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const tableContainer = document.getElementById("productTable");
+        const filterForm = document.getElementById("filterForm");
+
+        async function loadTable(formData) {
+            const res = await fetch("@Url.Action("Filter", "Products")", {
+                method: "POST",
+                body: formData
+            });
+
+            tableContainer.innerHTML = await res.text();
+
+            if (window.wireDeleteModal)
+                wireDeleteModal();
+        }
+
+        filterForm.addEventListener("submit", e => {
+            e.preventDefault();
+            loadTable(new FormData(filterForm));
+        });
+
+        document.getElementById("clearFilters").addEventListener("click", () => {
+            filterForm.reset();
+            loadTable(new FormData());
+        });
+    </script>
+}

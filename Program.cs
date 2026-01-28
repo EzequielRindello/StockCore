@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using StockCore.Data;
-using StockCore.Services;
 using StockCore.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +13,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Services
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IComboService, ComboService>();
 
 var app = builder.Build();
 
