@@ -2,12 +2,12 @@
 {
     public interface IProductService
     {
-        Task<List<ProductList>> GetAllAsync();
-        Task<ProductDetail> GetDetailAsync(int id);
-        Task<ProductForm> GetForEditAsync(int id);
-        Task CreateAsync(ProductForm model);
-        Task UpdateAsync(ProductForm model);
-        Task DeleteAsync(int id);
-        Task DeleteManyAsync(List<int> ids);
+        Task<List<ProductList>> GetAllProducts();
+        Task<ProductDetail> GetDetail(int id);
+        Task<ProductForm> GetForEdit(int id);
+
+        Task<(string key, string message)> CreateProduct(ProductForm model);
+        Task<(string key, string message)> UpdateProduct(ProductForm model);
+        Task<(string key, string message)> DeleteManyProducts(List<int> ids);
     }
 }

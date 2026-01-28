@@ -1,81 +1,84 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StockCore.Data;
+using StockCore.Dtos.Enums;
 using StockCore.Entities;
 using StockCore.Services.Interfaces;
 
-namespace StockCore.Services
+public class ProductService : IProductService
 {
-    public class ProductService : IProductService
+    private readonly ApplicationDbContext _db;
+
+    public ProductService(ApplicationDbContext context)
     {
-        private readonly ApplicationDbContext _context;
+        _db = context;
+    }
 
-        public ProductService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<List<ProductList>> GetAllAsync()
-        {
-            return await _context.Products
-                .Include(p => p.Category)
-                .Select(p => new ProductList
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Sku = p.Sku,
-                    Category = p.Category!.Name,
-                    IsActive = p.IsActive
-                })
-                .ToListAsync();
-        }
-
-        public async Task<ProductDetail> GetDetailAsync(int id)
-        {
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.StockMovements)
-                .FirstOrDefaultAsync(p => p.Id == id);
-
-            if (product == null)
-                throw new Exception("Product not found");
-
-            var stock = product.StockMovements.Sum(m =>
-                m.MovementType == Dtos.Enums.StockMovementType.In
-                    ? m.Quantity
-                    : -m.Quantity);
-
-            return new ProductDetail
+    public async Task<List<ProductList>> GetAllProducts()
+    {
+        return await _db
+            .Products
+            .Include(p => p.Category)
+            .Select(p => new ProductList
             {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Sku = product.Sku,
-                Category = product.Category!.Name,
-                IsActive = product.IsActive,
-                CreatedAt = product.CreatedAt,
-                Stock = stock
-            };
-        }
+                Id = p.Id,
+                Name = p.Name,
+                Sku = p.Sku,
+                Category = p.Category!.Name,
+                IsActive = p.IsActive
+            })
+            .ToListAsync();
+    }
 
-        public async Task<ProductForm> GetForEditAsync(int id)
+    public async Task<ProductDetail> GetDetail(int id)
+    {
+        var product = await _db
+            .Products
+            .Include(p => p.Category)
+            .Include(p => p.StockMovements)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (product == null)
+            throw new Exception("Product not found");
+
+        var stock = product.StockMovements.Sum(m =>
+            m.MovementType == StockMovementType.In ? m.Quantity : -m.Quantity);
+
+        return new ProductDetail
         {
-            var product = await _context.Products.FindAsync(id);
+            Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            Sku = product.Sku,
+            Category = product.Category!.Name,
+            IsActive = product.IsActive,
+            CreatedAt = product.CreatedAt,
+            Stock = stock
+        };
+    }
 
-            if (product == null)
-                throw new Exception("Product not found");
+    public async Task<ProductForm> GetForEdit(int id)
+    {
+        var product = await _db.Products.FindAsync(id);
 
-            return new ProductForm
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Sku = product.Sku,
-                CategoryId = product.CategoryId,
-                IsActive = product.IsActive
-            };
-        }
+        if (product == null)
+            throw new Exception("Product not found");
 
-        public async Task CreateAsync(ProductForm model)
+        return new ProductForm
+        {
+            Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            Sku = product.Sku,
+            CategoryId = product.CategoryId,
+            IsActive = product.IsActive
+        };
+    }
+
+    public async Task<(string, string)> CreateProduct(ProductForm model)
+    {
+        await using var tx = await _db.Database.BeginTransactionAsync();
+
+        try
         {
             var product = new Product
             {
@@ -86,16 +89,28 @@ namespace StockCore.Services
                 IsActive = model.IsActive
             };
 
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-        }
+            _db.Products.Add(product);
+            await _db.SaveChangesAsync();
+            await tx.CommitAsync();
 
-        public async Task UpdateAsync(ProductForm model)
+            return ("Success", "Product created successfully");
+        }
+        catch
         {
-            var product = await _context.Products.FindAsync(model.Id);
+            await tx.RollbackAsync();
+            return ("Error", "Error creating product");
+        }
+    }
+
+    public async Task<(string, string)> UpdateProduct(ProductForm model)
+    {
+        await using var tx = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            var product = await _db.Products.FindAsync(model.Id);
 
             if (product == null)
-                throw new Exception("Product not found");
+                return ("Error", "Product not found");
 
             product.Name = model.Name;
             product.Description = model.Description;
@@ -103,23 +118,39 @@ namespace StockCore.Services
             product.CategoryId = model.CategoryId;
             product.IsActive = model.IsActive;
 
-            await _context.SaveChangesAsync();
+            await _db.SaveChangesAsync();
+            await tx.CommitAsync();
+
+            return ("Success", "Product saved successfully");
         }
-
-        public async Task DeleteAsync(int id)
+        catch
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null) return;
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            await tx.RollbackAsync();
+            return ("Error", "Error saving product");
         }
+    }
 
-        public async Task DeleteManyAsync(List<int> ids)
+    public async Task<(string, string)> DeleteManyProducts(List<int> ids)
+    {
+        if (ids == null || ids.Count == 0)
+            return ("Error", "No products selected");
+
+        await using var tx = await _db.Database.BeginTransactionAsync();
+
+        try
         {
-            var products = _context.Products.Where(p => ids.Contains(p.Id));
-            _context.Products.RemoveRange(products);
-            await _context.SaveChangesAsync();
+            var products = _db.Products.Where(p => ids.Contains(p.Id));
+            _db.Products.RemoveRange(products);
+
+            await _db.SaveChangesAsync();
+            await tx.CommitAsync();
+
+            return ("Success", "Products deleted successfully");
+        }
+        catch
+        {
+            await tx.RollbackAsync();
+            return ("Error", "Error deleting products");
         }
     }
 }

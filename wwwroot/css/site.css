@@ -20,3 +20,20 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Toast */
+.toast-container{
+    margin-top: 1.9%;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+}
+.footer a{
+    text-decoration: none;
+    color: gray;
+}
+.footer a:hover {
+    text-decoration: underline;
+}
