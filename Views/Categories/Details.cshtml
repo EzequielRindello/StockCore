@@ -1,0 +1,13 @@
+﻿@model CategoryDetail
+
+<div class="detail-card">
+    <h2>@Model.Name</h2>
+    <div class="detail-row"><b>Description:</b> @Model.Description</div>
+    <div class="detail-row"><b>Products:</b> @Model.ProductCount</div>
+    <div class="detail-row"><b>Active:</b> @Model.IsActive</div>
+    <div class="detail-row"><b>Created:</b> @Model.CreatedAt.ToString("dd/MM/yyyy")</div>
+    <div class="detail-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+</div>
