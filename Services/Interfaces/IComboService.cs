@@ -3,4 +3,5 @@
 public interface IComboService
 {
     Task<List<SelectListItem>> GetCategoriesCombo();
+    Task<List<SelectListItem>> GetProductsCombo();
 }

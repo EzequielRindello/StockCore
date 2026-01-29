@@ -1,0 +1,15 @@
+﻿@model StockMovementDetail
+
+<div class="detail-card">
+    <h2>Stock Movement Details</h2>
+    <div class="detail-row"><b>Product:</b> @Model.ProductName</div>
+    <div class="detail-row"><b>SKU:</b> @Model.ProductSku</div>
+    <div class="detail-row"><b>Quantity:</b> @Model.Quantity</div>
+    <div class="detail-row"><b>Type:</b> @Model.MovementType</div>
+    <div class="detail-row"><b>Reason:</b> @Model.Reason</div>
+    <div class="detail-row"><b>Date:</b> @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+    <div class="detail-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+</div>

@@ -1,1 +1,79 @@
-﻿<h1>Stock Page</h1>
+﻿@model List<StockMovementList>
+
+<div class="products-layout">
+    <div class="filters">
+        <div class="row">
+            <div class="col-3 border-start vh-100">
+                <form id="filterForm">
+                    <h5>Filters</h5>
+                    <div class="mb-3">
+                        <label>Product</label>
+                        <select class="form-select"
+                                name="ProductId"
+                                asp-items="ViewBag.Products">
+                            <option value="">All</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Movement Type</label>
+                        <select class="form-select" name="MovementType">
+                            <option value="">All</option>
+                            <option value="1">In</option>
+                            <option value="2">Out</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Date From</label>
+                        <input type="date" class="form-control" name="DateFrom" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Date To</label>
+                        <input type="date" class="form-control" name="DateTo" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-2">
+                        Search
+                    </button>
+                    <button type="button"
+                            id="clearFilters"
+                            class="btn btn-outline-secondary w-100">
+                        Clear filters
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="actions-btns">
+            <a asp-action="Create" class="btn btn-danger">
+                <i class="bi bi-plus"></i> Add movement
+            </a>
+        </div>
+        <div id="stockTable">
+            @await Html.PartialAsync("_StockMovementTable", Model)
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const tableContainer = document.getElementById("stockTable");
+        const filterForm = document.getElementById("filterForm");
+        async function loadTable(formData) {
+            const res = await fetch("@Url.Action("Filter", "Stock")", {
+                method: "POST",
+                body: formData
+            });
+            tableContainer.innerHTML = await res.text();
+            if (window.wireDeleteModal)
+                wireDeleteModal();
+        }
+        filterForm.addEventListener("submit", e => {
+            e.preventDefault();
+            loadTable(new FormData(filterForm));
+        });
+        document.getElementById("clearFilters").addEventListener("click", () => {
+            filterForm.reset();
+            loadTable(new FormData());
+        });
+    </script>
+}
