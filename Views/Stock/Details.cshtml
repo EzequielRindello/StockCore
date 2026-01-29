@@ -9,7 +9,9 @@
     <div class="detail-row"><b>Reason:</b> @Model.Reason</div>
     <div class="detail-row"><b>Date:</b> @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
     <div class="detail-actions">
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
-        <a asp-action="Index" class="btn btn-secondary">Back</a>
+        <div>
+            <a asp-action="Index" class="btn btn-secondary">Back</a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+        </div>
     </div>
 </div>

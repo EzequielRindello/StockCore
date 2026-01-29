@@ -316,6 +316,65 @@ header {
     padding: 32px 16px;
 }
 
+.btn-report {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    .btn-report:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+.dashboard-analytics {
+    margin-bottom: 40px;
+}
+
+.analytics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+    .analytics-header h1 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-primary);
+    }
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.chart-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-body {
+    height: 400px;
+    padding: 12px;
+}
+
+@media (max-width: 900px) {
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 768px) {
     .dashboard-container {
         padding: 16px;
@@ -564,7 +623,8 @@ tbody td a {
    FORMS (CREATE / EDIT)
 ========================================================= */
 .form-page {
-    max-width: 800px;
+    max-width: 900px;
+    width:100%;
     margin: 40px auto;
     padding: 0 20px;
 }
@@ -649,6 +709,7 @@ tbody td a {
 .form-actions {
     margin-top: 28px;
     display: flex;
+    justify-content: flex-end;
     gap: 12px;
     padding-top: 20px;
     border-top: 1px solid var(--border-color);
@@ -694,7 +755,8 @@ tbody td a {
    DETAILS VIEW
 ========================================================= */
 .detail-card {
-    max-width: 800px;
+    max-width: 900px;
+    width: 100%;
     margin: 40px auto;
     padding: 0 20px;
 }
@@ -735,6 +797,8 @@ tbody td a {
     }
 
 .detail-actions {
+    display: flex;
+    justify-content: flex-end;
     margin-top: 28px;
     padding-top: 20px;
     border-top: 2px solid var(--border-color);

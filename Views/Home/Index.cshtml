@@ -99,122 +99,65 @@
             </div>
         </div>
     </div>
+
+    <div class="dashboard-analytics mt-4">
+        <div class="dashboard-header mt-4">
+            <h1>Analytics</h1>
+            <p class="dashboard-subtitle">Overview charts of data based on the inventory</p>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <button id="btnExportReport" class="btn-report mb-3">
+                <i class="bi bi-filetype-csv"></i>
+                Create report
+            </button>
+        </div>
+
+        <div class="analytics-grid">
+            <div class="dashboard-card chart-card">
+                <div class="card-header">
+                    <h2>Stock In vs Stock Out (This Month)</h2>
+                </div>
+                <div class="card-body chart-body">
+                    <canvas id="stockInOutChart"></canvas>
+                </div>
+            </div>
+
+            <div class="dashboard-card chart-card">
+                <div class="card-header">
+                    <h2>Products per Category</h2>
+                </div>
+                <div class="card-body chart-body">
+                    <canvas id="productsByCategoryChart"></canvas>
+                </div>
+            </div>
+
+            <div class="dashboard-card chart-card">
+                <div class="card-header">
+                    <h2>Stock Movements (Last 6 Months)</h2>
+                </div>
+                <div class="card-body chart-body">
+                    <canvas id="monthlyStockChart"></canvas>
+                </div>
+            </div>
+
+            <div class="dashboard-card chart-card">
+                <div class="card-header">
+                    <h2>Stock by Category</h2>
+                </div>
+                <div class="card-body chart-body">
+                    <canvas id="stackedCategoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-            await loadDashboardData();
-        });
-
-        async function loadDashboardData() {
-            try {
-                const response = await fetch('@Url.Action("GetDashboardData", "Home")');
-                const data = await response.json();
-
-                document.getElementById('totalProducts').textContent = data.totalProducts;
-                document.getElementById('stockIn').textContent = data.stockInThisMonth;
-                document.getElementById('stockOut').textContent = data.stockOutThisMonth;
-                document.getElementById('totalCategories').textContent = data.totalCategories;
-
-                renderRecentMovements(data.recentMovements);
-                renderLowStockProducts(data.lowStockProducts);
-                renderCategoriesOverview(data.categoriesOverview);
-                renderRecentProducts(data.recentProducts);
-            } catch (error) {
-                console.error('Error loading dashboard:', error);
-            }
-        }
-
-        function renderRecentMovements(movements) {
-            const container = document.getElementById('recentMovements');
-            if (!movements || movements.length === 0) {
-                container.innerHTML = '<p class="no-data">No recent movements</p>';
-                return;
-            }
-
-            container.innerHTML = movements.map(m => `
-                <div class="list-item">
-                    <div class="list-item-icon ${m.movementType === 1 ? 'icon-success' : 'icon-danger'}">
-                        <i class="bi bi-arrow-${m.movementType === 1 ? 'up' : 'down'}-circle"></i>
-                    </div>
-                    <div class="list-item-content">
-                        <p class="list-item-title">${m.productName}</p>
-                        <p class="list-item-subtitle">${m.quantity} units • ${formatDate(m.createdAt)}</p>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderLowStockProducts(products) {
-            const container = document.getElementById('lowStockProducts');
-            if (!products || products.length === 0) {
-                container.innerHTML = '<p class="no-data">All products have sufficient stock</p>';
-                return;
-            }
-
-            container.innerHTML = products.map(p => `
-                <div class="list-item">
-                    <div class="list-item-icon icon-warning">
-                        <i class="bi bi-exclamation-triangle"></i>
-                    </div>
-                    <div class="list-item-content">
-                        <p class="list-item-title">${p.name}</p>
-                        <p class="list-item-subtitle">${p.sku} • Stock: ${p.stock}</p>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderCategoriesOverview(categories) {
-            const container = document.getElementById('categoriesOverview');
-            if (!categories || categories.length === 0) {
-                container.innerHTML = '<p class="no-data">No categories found</p>';
-                return;
-            }
-
-            container.innerHTML = categories.map(c => `
-                <div class="list-item">
-                    <div class="list-item-content">
-                        <p class="list-item-title">${c.name}</p>
-                        <p class="list-item-subtitle">${c.productCount} products</p>
-                    </div>
-                    <div class="list-item-badge">${c.productCount}</div>
-                </div>
-            `).join('');
-        }
-
-        function renderRecentProducts(products) {
-            const container = document.getElementById('recentProducts');
-            if (!products || products.length === 0) {
-                container.innerHTML = '<p class="no-data">No products found</p>';
-                return;
-            }
-
-            container.innerHTML = products.map(p => `
-                <div class="list-item">
-                    <div class="list-item-content">
-                        <p class="list-item-title">${p.name}</p>
-                        <p class="list-item-subtitle">${p.category} • ${p.sku}</p>
-                    </div>
-                    <div class="list-item-badge ${p.isActive ? 'badge-success' : 'badge-inactive'}">
-                        ${p.isActive ? 'Active' : 'Inactive'}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diff = now - date;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-
-            if (hours < 1) return 'Just now';
-            if (hours < 24) return `${hours}h ago`;
-            const days = Math.floor(hours / 24);
-            if (days < 7) return `${days}d ago`;
-            return date.toLocaleDateString();
-        }
+        window.dashboardConfig = {
+            dataUrl: '@Url.Action("GetDashboardData", "Home")',
+            exportUrl: '@Url.Action("ExportDashboardReport", "Home")'
+        };
     </script>
 }

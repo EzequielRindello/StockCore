@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StockCore.Data;
 using StockCore.Dtos.Enums;
+using StockCore.Models;
 
 public class HomeController : Controller
 {
@@ -12,30 +13,19 @@ public class HomeController : Controller
         _db = db;
     }
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+    public IActionResult Index() => View();
 
     [HttpGet]
     public async Task<IActionResult> GetDashboardData()
     {
         var now = DateTime.UtcNow;
         var firstDayOfMonth = new DateTime(now.Year, now.Month, 1);
+        var sixMonthsAgo = now.AddMonths(-5);
 
-        var totalProducts = await _db.Products.CountAsync();
-        var totalCategories = await _db.Categories.CountAsync();
-
-        var stockInThisMonth = await _db.StockMovements
-            .Where(s => s.MovementType == StockMovementType.In && s.CreatedAt >= firstDayOfMonth)
-            .SumAsync(s => s.Quantity);
-
-        var stockOutThisMonth = await _db.StockMovements
-            .Where(s => s.MovementType == StockMovementType.Out && s.CreatedAt >= firstDayOfMonth)
-            .SumAsync(s => s.Quantity);
+        var summary = await GetDashboardSummaryAsync(firstDayOfMonth);
 
         var recentMovements = await _db.StockMovements
-            .Include(s => s.Product)
+            .AsNoTracking()
             .OrderByDescending(s => s.CreatedAt)
             .Take(5)
             .Select(s => new
@@ -48,40 +38,33 @@ public class HomeController : Controller
             })
             .ToListAsync();
 
-        var productsWithStock = await _db.Products
-            .Include(p => p.StockMovements)
-            .Include(p => p.Category)
+        var lowStockProducts = await _db.Products
+            .AsNoTracking()
             .Select(p => new
             {
-                p.Id,
                 p.Name,
                 p.Sku,
-                CategoryName = p.Category!.Name,
-                p.IsActive,
                 Stock = p.StockMovements.Sum(m =>
                     m.MovementType == StockMovementType.In ? m.Quantity : -m.Quantity)
             })
-            .ToListAsync();
-
-        var lowStockProducts = productsWithStock
             .Where(p => p.Stock < 10)
             .OrderBy(p => p.Stock)
             .Take(5)
-            .ToList();
+            .ToListAsync();
 
         var categoriesOverview = await _db.Categories
-            .Include(c => c.Products)
+            .AsNoTracking()
             .OrderByDescending(c => c.Products.Count)
             .Take(5)
             .Select(c => new
             {
                 c.Name,
-                ProductCount = c.Products.Count
+                ProductCount = c.Products.Count()
             })
             .ToListAsync();
 
         var recentProducts = await _db.Products
-            .Include(p => p.Category)
+            .AsNoTracking()
             .OrderByDescending(p => p.CreatedAt)
             .Take(5)
             .Select(p => new
@@ -93,16 +76,109 @@ public class HomeController : Controller
             })
             .ToListAsync();
 
+        var stockInOutChart = await _db.StockMovements
+            .AsNoTracking()
+            .Where(s => s.CreatedAt >= firstDayOfMonth)
+            .GroupBy(s => s.MovementType)
+            .Select(g => new
+            {
+                MovementType = g.Key,
+                Total = g.Sum(x => x.Quantity)
+            })
+            .ToListAsync();
+
+        var monthlyStockChart = await _db.StockMovements
+            .AsNoTracking()
+            .Where(s => s.CreatedAt >= sixMonthsAgo)
+            .GroupBy(s => new
+            {
+                s.CreatedAt.Year,
+                s.CreatedAt.Month,
+                s.MovementType
+            })
+            .Select(g => new
+            {
+                g.Key.Year,
+                g.Key.Month,
+                g.Key.MovementType,
+                Total = g.Sum(x => x.Quantity)
+            })
+            .ToListAsync();
+
+        var productsByCategoryChart = await _db.Categories
+            .AsNoTracking()
+            .Select(c => new
+            {
+                c.Name,
+                ProductCount = c.Products.Count()
+            })
+            .ToListAsync();
+
+        var stackedCategoryChart = await _db.Categories
+            .AsNoTracking()
+            .Select(c => new
+            {
+                Category = c.Name,
+                StockIn = c.Products
+                    .SelectMany(p => p.StockMovements)
+                    .Where(m => m.MovementType == StockMovementType.In)
+                    .Sum(m => m.Quantity),
+                StockOut = c.Products
+                    .SelectMany(p => p.StockMovements)
+                    .Where(m => m.MovementType == StockMovementType.Out)
+                    .Sum(m => m.Quantity)
+            })
+            .ToListAsync();
+
         return Json(new
         {
-            totalProducts,
-            totalCategories,
-            stockInThisMonth,
-            stockOutThisMonth,
+            summary.TotalProducts,
+            summary.TotalCategories,
+            summary.StockInThisMonth,
+            summary.StockOutThisMonth,
             recentMovements,
             lowStockProducts,
             categoriesOverview,
-            recentProducts
+            recentProducts,
+            stockInOutChart,
+            productsByCategoryChart,
+            monthlyStockChart,
+            stackedCategoryChart
         });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ExportDashboardReport()
+    {
+        var firstDayOfMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
+        var summary = await GetDashboardSummaryAsync(firstDayOfMonth);
+
+        var csv =
+            "Metric,Value\n" +
+            $"Total Products,{summary.TotalProducts}\n" +
+            $"Total Categories,{summary.TotalCategories}\n" +
+            $"Stock In (This Month),{summary.StockInThisMonth}\n" +
+            $"Stock Out (This Month),{summary.StockOutThisMonth}\n";
+
+        return File(
+            System.Text.Encoding.UTF8.GetBytes(csv),
+            "text/csv",
+            "dashboard-report.csv"
+        );
+    }
+
+    private async Task<DashboardSummary> GetDashboardSummaryAsync(DateTime firstDayOfMonth)
+    {
+        return new DashboardSummary
+        {
+            TotalProducts = await _db.Products.CountAsync(),
+            TotalCategories = await _db.Categories.CountAsync(),
+            StockInThisMonth = await _db.StockMovements
+                .Where(s => s.MovementType == StockMovementType.In && s.CreatedAt >= firstDayOfMonth)
+                .SumAsync(s => s.Quantity),
+            StockOutThisMonth = await _db.StockMovements
+                .Where(s => s.MovementType == StockMovementType.Out && s.CreatedAt >= firstDayOfMonth)
+                .SumAsync(s => s.Quantity)
+        };
     }
 }
