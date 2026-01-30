@@ -659,7 +659,7 @@ tbody td a {
    TOAST NOTIFICATIONS
 ========================================================= */
 .toast-container {
-    margin-top: 1.5%;
+    margin-top: 2.2%;
 }
 
 /* =========================================================
@@ -964,3 +964,19 @@ tbody td a {
         background-color: var(--danger-hover);
     }
 
+.toast.text-bg-success {
+    background-color: var(--success-color) !important;
+    color: #fff;
+}
+
+.toast.text-bg-danger {
+    background-color: var(--danger-color) !important;
+    color: #fff;
+}
+
+    .toast.text-bg-success .toast-header,
+    .toast.text-bg-danger .toast-header {
+        background-color: transparent;
+        color: #fff;
+        border-bottom: 1px solid rgba(255,255,255,0.25);
+    }
