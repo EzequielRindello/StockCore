@@ -1,15 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using StockCore.Services.Const;
+using System.ComponentModel.DataAnnotations;
 
 public class CategoryForm
 {
     public int Id { get; set; }
 
-    [Required(ErrorMessage = "Name is required")]
-    [MaxLength(100)]
+    [Required(ErrorMessage = ValidationMessages.NameRequired)]
+    [MaxLength(100, ErrorMessage = ValidationMessages.NameMax100)]
     public string Name { get; set; } = string.Empty;
 
-    [MaxLength(250)]
-    public string? Description { get; set; }
+    [Required(ErrorMessage = ValidationMessages.DescriptionRequired)]
+    [MaxLength(250, ErrorMessage = ValidationMessages.DescriptionMax250)]
+    public string Description { get; set; } = string.Empty;
 
     public bool IsActive { get; set; } = true;
 }
