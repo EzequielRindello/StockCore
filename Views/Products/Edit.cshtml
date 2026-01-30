@@ -5,7 +5,7 @@
 
     @if (ViewBag.Message != null)
     {
-        <div id="successEditAlert" class="alert alert-success py-1 px-2 small d-inline-block">
+        <div id="successEditAlert" class="alert alert-success py-1 px-2 small">
             @ViewBag.Message
         </div>
     }
@@ -13,8 +13,12 @@
     <partial name="_Form" model="Model" />
 </div>
 
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
 <script>
-    setTimeout(function () {
+    setTimeout(() => {
         const alert = document.getElementById('successEditAlert');
         if (alert) alert.remove();
     }, 4000);
