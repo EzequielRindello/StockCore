@@ -37,5 +37,17 @@
         {
             return $"No {entity} selected";
         }
+
+        // Categories
+        public static string CategoryWithProducts()
+        {
+            return "Categories that have associated products cannot be deleted.";
+        }
+
+        // Stock 
+        public static string ProductWithStock()
+        {
+            return "Products with associated stock cannot be deleted.";
+        }
     }
 }

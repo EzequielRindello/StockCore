@@ -172,7 +172,11 @@ public class ProductService : IProductService
         if (ids == null || ids.Count == 0)
             return (ValidationMessages.ERROR, ValidationMessages.SelectedMessage("products"));
 
-        await using var tx = await _db.Database.BeginTransactionAsync();
+        var hasStock = await _db.Products
+            .AnyAsync(p => ids.Contains(p.Id) && p.StockMovements.Any());
+
+        if (hasStock)
+            return (ValidationMessages.ERROR, ValidationMessages.ProductWithStock());
 
         try
         {
@@ -180,14 +184,13 @@ public class ProductService : IProductService
             _db.Products.RemoveRange(products);
 
             await _db.SaveChangesAsync();
-            await tx.CommitAsync();
 
             return (ValidationMessages.SUCCESS, ValidationMessages.DeletedMessage("Product"));
         }
         catch
         {
-            await tx.RollbackAsync();
             return (ValidationMessages.ERROR, ValidationMessages.ErrorMessage("deleting", "product"));
         }
     }
+
 }
