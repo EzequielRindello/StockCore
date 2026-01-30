@@ -150,6 +150,13 @@ public class CategoryService : ICategoryService
         if (ids == null || ids.Count == 0)
             return (ValidationMessages.ERROR, ValidationMessages.SelectedMessage("categories"));
 
+        var hasProducts = await _db
+            .Categories
+            .AnyAsync(c => ids.Contains(c.Id) && c.Products.Any());
+
+        if (hasProducts)
+            return (ValidationMessages.ERROR, ValidationMessages.CategoryWithProducts());
+
         await using var tx = await _db.Database.BeginTransactionAsync();
 
         try
@@ -168,4 +175,5 @@ public class CategoryService : ICategoryService
             return (ValidationMessages.ERROR, ValidationMessages.ErrorMessage("deleting", "category"));
         }
     }
+
 }
