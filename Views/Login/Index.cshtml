@@ -1,1 +1,145 @@
-﻿<h1>Login Page</h1>
+@model List<UserList>
+
+<div class="products-layout">
+    <!-- SIDEBAR -->
+    <div class="filters">
+        <h5>Your Profile</h5>
+        <div class="mb-3">
+            <div class="mb-2"><strong>Username:</strong></div>
+            <div>@ViewBag.CurrentUser.UserName</div>
+        </div>
+        <div class="mb-3">
+            <div class="mb-2"><strong>Email:</strong></div>
+            <div>@ViewBag.CurrentUser.Email</div>
+        </div>
+        <div class="mb-3">
+            <div class="mb-2"><strong>Status:</strong></div>
+            <div>@(ViewBag.CurrentUser.IsActive ? "Active" : "Inactive")</div>
+        </div>
+        <a asp-action="Edit" asp-route-id="@ViewBag.CurrentUser.Id" class="btn btn-primary w-100 mb-2">
+            Edit Profile
+        </a>
+        <form asp-action="Logout" method="post">
+            <button type="submit" class="btn btn-outline-secondary w-100">
+                Logout
+            </button>
+        </form>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+        <div class="actions-btns">
+            <form id="filterForm" class="d-flex gap-2 flex-grow-1">
+                <input class="form-control"
+                       name="Search"
+                       placeholder="Search by name or email..."
+                       style="max-width: 400px;" />
+                <button type="submit" class="btn btn-secondary">
+                    <i class="bi bi-search"></i> Search
+                </button>
+                <button type="button"
+                        id="clearFilters"
+                        class="btn btn-outline-secondary">
+                    Clear
+                </button>
+            </form>
+            <a asp-action="Create" class="btn btn-danger">
+                <i class="bi bi-plus"></i> Add User
+            </a>
+        </div>
+
+        <div id="userTable">
+            @await Html.PartialAsync("_UserTable", Model)
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DELETE -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete user <strong id="deleteUserName"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="post" asp-action="Delete" style="display:inline;">
+                    <input type="hidden" name="id" id="deleteUserId" />
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const tableContainer = document.getElementById("userTable");
+        const filterForm = document.getElementById("filterForm");
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+
+        @if (TempData["MessageKey"] != null && TempData["Message"] != null)
+        {
+                <text>
+                showToastMessage('@TempData["MessageKey"]', '@TempData["Message"]');
+                </text>
+        }
+
+        function showToastMessage(key, message) {
+            const toastClass = key === 'Success' ? 'text-bg-success' : 'text-bg-danger';
+            const toastTitle = key === 'Success' ? 'Success' : 'Error';
+
+            const toastHtml = `
+                <div class="toast ${toastClass}" role="alert">
+                    <div class="toast-header ${toastClass}">
+                        <strong class="me-auto">${toastTitle}</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">${message}</div>
+                </div>
+            `;
+
+            const container = document.querySelector('.toast-container');
+            if (container) {
+                container.insertAdjacentHTML('beforeend', toastHtml);
+                const toast = new bootstrap.Toast(container.lastElementChild);
+                toast.show();
+            }
+        }
+
+        async function loadTable(formData) {
+            const res = await fetch("@Url.Action("Filter", "Login")", {
+                method: "POST",
+                body: formData
+            });
+            tableContainer.innerHTML = await res.text();
+            wireDeleteButtons();
+        }
+
+        filterForm.addEventListener("submit", e => {
+            e.preventDefault();
+            loadTable(new FormData(filterForm));
+        });
+
+        document.getElementById("clearFilters").addEventListener("click", () => {
+            filterForm.reset();
+            loadTable(new FormData());
+        });
+
+        function wireDeleteButtons() {
+            document.querySelectorAll('.delete-user-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.getElementById('deleteUserId').value = this.dataset.userId;
+                    document.getElementById('deleteUserName').textContent = this.dataset.userName;
+                    deleteModal.show();
+                });
+            });
+        }
+
+        wireDeleteButtons();
+    </script>
+}

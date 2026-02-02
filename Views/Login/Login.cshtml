@@ -1,0 +1,33 @@
+<div class="form-page">
+    <h2>Login</h2>
+
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+    {
+        <div class="alert alert-danger py-2 px-3 mb-3">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    <form method="post" asp-action="Login" class="form-card">
+        <div class="mb-2">
+            <label>Email</label>
+            <input name="email"
+                   type="email"
+                   class="form-control"
+                   value="@ViewBag.Email"
+                   required />
+        </div>
+        <div class="mb-2">
+            <label>Password</label>
+            <input name="password" type="password" class="form-control" required />
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </form>
+
+    <div class="text-muted small mt-3">
+        <i class="bi bi-info-circle"></i>
+        If you need to create a new account or reset your password, please contact an admin or manager.
+    </div>
+</div>
