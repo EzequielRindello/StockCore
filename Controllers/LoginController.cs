@@ -59,21 +59,16 @@ public class LoginController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(UserFormView model)
+    public async Task<IActionResult> Create(CreateUserViewModel model)
     {
-
         if (!ModelState.IsValid)
-        {
-            model.IsEdit = false;
             return View(model);
-        }
 
         var (key, message) = await _service.CreateUser(model.User);
 
         if (key == ValidationMessages.ERROR)
         {
             ViewBag.ErrorMessage = message;
-            model.IsEdit = false;
             return View(model);
         }
 
