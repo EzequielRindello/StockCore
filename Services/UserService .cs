@@ -183,7 +183,7 @@ namespace StockCore.Services
                         return (model, ValidationMessages.ERROR, "Username already exists");
                 }
 
-                // Actualizar datos
+
                 user.UserName = model.UserName;
                 user.Email = model.Email;
                 user.IsActive = model.IsActive;
