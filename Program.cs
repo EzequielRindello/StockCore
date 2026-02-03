@@ -58,11 +58,10 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-using (var scope = app.Services.CreateScope())
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.Migrate();
-    DbSeeder.Seed(context);
-}
+    var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseNpgsql(conn);
+});
 
 app.Run();
