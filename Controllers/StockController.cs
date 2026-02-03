@@ -43,6 +43,7 @@ public class StockController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> Create(StockMovementFormView vm)
     {
         if (!ModelState.IsValid)
@@ -66,6 +67,7 @@ public class StockController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> Edit(StockMovementFormView vm)
     {
         if (!ModelState.IsValid)
@@ -91,6 +93,7 @@ public class StockController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> DeleteMany(List<int> ids)
     {
         TempData.Merge(await _stockMovementService.DeleteManyStockMovements(ids));
@@ -98,6 +101,7 @@ public class StockController : Controller
     }
 
     [HttpGet]
+    [RequireActiveUser]
     public async Task<IActionResult> ExportCsv([FromQuery] StockMovementFilter filter)
     {
         var csv = await _stockMovementService.ExportStockMovementsCsvAsync(filter);

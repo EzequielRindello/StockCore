@@ -24,6 +24,13 @@ public class LoginController : Controller
     }
 
     [HttpPost]
+    public async Task<IActionResult> Filter(UserFilter filter)
+    {
+        var users = await _service.FilterUsers(filter);
+        return PartialView("_UserTable", users);
+    }
+
+    [HttpPost]
     public async Task<IActionResult> Login(string email, string password)
     {
         var result = await _service.AuthenticateUser(email, password);
@@ -59,6 +66,7 @@ public class LoginController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> Create(CreateUserViewModel model)
     {
         if (!ModelState.IsValid)
@@ -97,6 +105,7 @@ public class LoginController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> Edit(UserFormView model)
     {
 
@@ -125,6 +134,7 @@ public class LoginController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> ChangePassword(ChangePasswordForm model)
     {
 
@@ -192,6 +202,7 @@ public class LoginController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> Delete(string id)
     {
         var currentUserId = HttpContext.Session.GetString("UserId");
@@ -201,13 +212,6 @@ public class LoginController : Controller
         TempData["Message"] = message;
 
         return RedirectToAction("Index");
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Filter(UserFilter filter)
-    {
-        var users = await _service.FilterUsers(filter);
-        return PartialView("_UserTable", users);
     }
 
     [HttpPost]

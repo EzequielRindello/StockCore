@@ -11,5 +11,6 @@
         Task<(string key, string message)> ChangePassword(string userId, string newPassword);
         Task<(string key, string message)> DeleteUser(string userId, string currentUserId);
         Task<AuthResult> AuthenticateUser(string email, string password);
+        Task<bool> IsUserActive(string userId);
     }
 }

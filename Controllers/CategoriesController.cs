@@ -35,6 +35,7 @@ public class CategoriesController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> Create(CategoryFormView vm)
     {
         if (!ModelState.IsValid)
@@ -56,6 +57,7 @@ public class CategoriesController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> Edit(CategoryFormView vm)
     {
         if (!ModelState.IsValid)
@@ -78,6 +80,7 @@ public class CategoriesController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> DeleteMany(List<int> ids)
     {
         TempData.Merge(await _categoryService.DeleteManyCategories(ids));
