@@ -9,8 +9,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    if (builder.Environment.IsProduction())
+        options.UseNpgsql(conn);
+    else
+        options.UseSqlServer(conn);
+});
+
 
 // Services
 builder.Services.AddScoped<IHomeService, HomeService>();
@@ -54,6 +61,7 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate();
     DbSeeder.Seed(context);
 }
 

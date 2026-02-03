@@ -12,15 +12,15 @@ using StockCore.Data;
 namespace StockCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260202152602_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260203153802_InitialPostgres")]
+    partial class InitialPostgres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
