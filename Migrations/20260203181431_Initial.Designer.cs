@@ -12,7 +12,7 @@ using StockCore.Data;
 namespace StockCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260203164357_Initial")]
+    [Migration("20260203181431_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

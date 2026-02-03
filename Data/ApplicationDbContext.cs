@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StockCore.Entities;
 
 namespace StockCore.Data
@@ -13,6 +14,20 @@ namespace StockCore.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
+                v => v.ToUniversalTime(),
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+            );
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(DateTime))
+                        property.SetValueConverter(dateTimeConverter);
+                }
+            }
 
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
@@ -29,10 +44,7 @@ namespace StockCore.Data
             modelBuilder.Entity<ApplicationUserEntity>(entity =>
             {
                 entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever();
-
+                entity.Property(e => e.Id).ValueGeneratedNever();
                 entity.HasIndex(e => e.Email).IsUnique();
                 entity.HasIndex(e => e.UserName).IsUnique();
             });
