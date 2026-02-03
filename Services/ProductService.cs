@@ -4,6 +4,7 @@ using StockCore.Dtos.Enums;
 using StockCore.Entities;
 using StockCore.Services.Const;
 using StockCore.Services.Interfaces;
+using System.Text;
 
 public class ProductService : IProductService
 {
@@ -193,4 +194,38 @@ public class ProductService : IProductService
         }
     }
 
+    public async Task<string> ExportProductsCsvAsync(ProductFilter filter)
+    {
+        var query = _db.Products
+            .Include(p => p.Category)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(filter.Search))
+            query = query.Where(p => p.Name.Contains(filter.Search));
+
+        if (filter.CategoryId.HasValue)
+            query = query.Where(p => p.CategoryId == filter.CategoryId);
+
+        if (filter.IsActive.HasValue)
+            query = query.Where(p => p.IsActive == filter.IsActive);
+
+        var products = await query.ToListAsync();
+
+        var sb = new StringBuilder();
+        sb.AppendLine("Id,Name,Sku,Category,Active,CreatedAt");
+
+        foreach (var p in products)
+        {
+            sb.AppendLine(
+                $"{p.Id}," +
+                $"\"{p.Name}\"," +
+                $"{p.Sku}," +
+                $"\"{p.Category?.Name}\"," +
+                $"{p.IsActive}," +
+                $"{p.CreatedAt:yyyy-MM-dd}"
+            );
+        }
+
+        return sb.ToString();
+    }
 }

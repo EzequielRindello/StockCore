@@ -2,6 +2,7 @@
 using StockCore.Data;
 using StockCore.Entities;
 using StockCore.Services.Const;
+using System.Text;
 
 public class CategoryService : ICategoryService
 {
@@ -176,4 +177,32 @@ public class CategoryService : ICategoryService
         }
     }
 
+    public async Task<string> ExportCategoriesCsvAsync(CategoryFilter filter)
+    {
+        var query = _db.Categories.AsQueryable();
+
+        if (!string.IsNullOrEmpty(filter.Search))
+            query = query.Where(c => c.Name.Contains(filter.Search));
+
+        if (filter.IsActive.HasValue)
+            query = query.Where(c => c.IsActive == filter.IsActive);
+
+        var categories = await query.ToListAsync();
+
+        var sb = new StringBuilder();
+        sb.AppendLine("Id,Name,Description,Active,CreatedAt");
+
+        foreach (var c in categories)
+        {
+            sb.AppendLine(
+                $"{c.Id}," +
+                $"\"{c.Name}\"," +
+                $"\"{c.Description}\"," +
+                $"{c.IsActive}," +
+                $"{c.CreatedAt:yyyy-MM-dd}"
+            );
+        }
+
+        return sb.ToString();
+    }
 }

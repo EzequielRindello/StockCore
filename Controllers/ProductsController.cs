@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StockCore.Services.Const;
 using StockCore.Services.Interfaces;
+using System.Text;
 
 public class ProductsController : Controller
 {
@@ -99,5 +100,17 @@ public class ProductsController : Controller
     {
         TempData.Merge(await _productService.DeleteManyProducts(ids));
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ExportCsv([FromQuery] ProductFilter filter)
+    {
+        var csv = await _productService.ExportProductsCsvAsync(filter);
+
+        return File(
+            Encoding.UTF8.GetBytes(csv),
+            "text/csv",
+            "products.csv"
+        );
     }
 }

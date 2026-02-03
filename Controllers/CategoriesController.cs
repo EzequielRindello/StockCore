@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StockCore.Services.Const;
+using System.Text;
 
 public class CategoriesController : Controller
 {
@@ -81,5 +82,17 @@ public class CategoriesController : Controller
     {
         TempData.Merge(await _categoryService.DeleteManyCategories(ids));
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ExportCsv([FromQuery] CategoryFilter filter)
+    {
+        var csv = await _categoryService.ExportCategoriesCsvAsync(filter);
+
+        return File(
+            Encoding.UTF8.GetBytes(csv),
+            "text/csv",
+            "categories.csv"
+        );
     }
 }

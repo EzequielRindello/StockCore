@@ -2,6 +2,7 @@
 using StockCore.Data;
 using StockCore.Entities;
 using StockCore.Services.Const;
+using System.Text;
 
 public class StockService : IStockService
 {
@@ -188,5 +189,43 @@ public class StockService : IStockService
             await tx.RollbackAsync();
             return (ValidationMessages.ERROR, ValidationMessages.ErrorMessage("deleting", "stock movement"));
         }
+    }
+
+    public async Task<string> ExportStockMovementsCsvAsync(StockMovementFilter filter)
+    {
+        var query = _db.StockMovements
+            .Include(s => s.Product)
+            .AsQueryable();
+
+        if (filter.ProductId.HasValue)
+            query = query.Where(s => s.ProductId == filter.ProductId);
+
+        if (filter.MovementType.HasValue)
+            query = query.Where(s => s.MovementType == filter.MovementType);
+
+        if (filter.DateFrom.HasValue)
+            query = query.Where(s => s.CreatedAt >= filter.DateFrom);
+
+        if (filter.DateTo.HasValue)
+            query = query.Where(s => s.CreatedAt <= filter.DateTo);
+
+        var movements = await query.ToListAsync();
+
+        var sb = new StringBuilder();
+        sb.AppendLine("Id,Product,Type,Quantity,Reason,Date");
+
+        foreach (var m in movements)
+        {
+            sb.AppendLine(
+                $"{m.Id}," +
+                $"\"{m.Product?.Name}\"," +
+                $"{m.MovementType}," +
+                $"{m.Quantity}," +
+                $"\"{m.Reason}\"," +
+                $"{m.CreatedAt:yyyy-MM-dd}"
+            );
+        }
+
+        return sb.ToString();
     }
 }
