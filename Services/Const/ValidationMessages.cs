@@ -50,6 +50,17 @@
             return "Products with associated stock cannot be deleted.";
         }
 
+        // Auth
+        public static string UniqueEmail()
+        {
+            return "Username or email already exists";
+        }
+
+        public static string ResetPassword()
+        {
+            return "Password reset email sent successfully";
+        }
+
         // Forms
         public const string NameRequired = "Name is required";
         public const string DescriptionRequired = "Description is required";
@@ -66,5 +77,10 @@
         public const string DescriptionMax250 = "Description must not exceed 250 characters";
         public const string DescriptionMax500 = "Description must not exceed 500 characters";
         public const string SkuMax50 = "SKU must not exceed 50 characters";
+        public const string UserNameRequired = "User Name is required";
+        public const string EmailRequired = "Email is required";
+        public const string InvalidEmail = "Invalid email format";
+        public const string PasswordRequiered = "Password is required";
+        public const string InvalidPassword = "Password must be at least 6 characters";
     }
 }

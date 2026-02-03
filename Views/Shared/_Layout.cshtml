@@ -40,11 +40,15 @@
                 <!-- User -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
+                        @{
+                            var userId = Context.Session.GetString("UserId");
+                            var userName = Context.Session.GetString("UserName") ?? "Account";
+                        }
                         <a class="nav-link user-link"
                            asp-controller="Login"
                            asp-action="Index">
                             <i class="bi bi-person-circle"></i>
-                            <span>Login</span>
+                            <span>@(string.IsNullOrEmpty(userId) ? "Login" : userName)</span>
                         </a>
                     </li>
                 </ul>

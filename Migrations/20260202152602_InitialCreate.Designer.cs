@@ -12,8 +12,8 @@ using StockCore.Data;
 namespace StockCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260122231527_AddSupplyCompanyAndUser")]
-    partial class AddSupplyCompanyAndUser
+    [Migration("20260202152602_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,6 +54,12 @@ namespace StockCore.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("UserName")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -231,7 +237,7 @@ namespace StockCore.Migrations
                     b.HasOne("StockCore.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("StockCore.Entities.Company", null)
@@ -250,7 +256,7 @@ namespace StockCore.Migrations
                     b.HasOne("StockCore.Entities.Product", "Product")
                         .WithMany("StockMovements")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Product");
