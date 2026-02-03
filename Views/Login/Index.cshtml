@@ -2,17 +2,17 @@
 
 <div class="products-layout">
     <!-- SIDEBAR -->
-    <div class="filters">
+    <div class="filters p-2">
         <h5>Your Profile</h5>
-        <div class="mb-3">
+        <div class="mb-3 p-2">
             <div class="mb-2"><strong>Username:</strong></div>
             <div>@ViewBag.CurrentUser.UserName</div>
         </div>
-        <div class="mb-3">
+        <div class="mb-3 p-2">
             <div class="mb-2"><strong>Email:</strong></div>
             <div>@ViewBag.CurrentUser.Email</div>
         </div>
-        <div class="mb-3">
+        <div class="mb-3 p-2">
             <div class="mb-2"><strong>Status:</strong></div>
             <div>@(ViewBag.CurrentUser.IsActive ? "Active" : "Inactive")</div>
         </div>
@@ -30,7 +30,7 @@
     <div class="content">
         <div class="actions-btns">
             <form id="filterForm" class="d-flex gap-2 flex-grow-1">
-                <input class="form-control"
+                <input class="form-control-search"
                        name="Search"
                        placeholder="Search by name or email..."
                        style="max-width: 400px;" />
@@ -39,7 +39,7 @@
                 </button>
                 <button type="button"
                         id="clearFilters"
-                        class="btn btn-outline-secondary">
+                        class="btn">
                     Clear
                 </button>
             </form>

@@ -25,13 +25,8 @@
         </div>
 
         <div class="form-check mb-2">
-            <input type="checkbox"
-                   class="form-check-input"
-                   id="User_IsActive"
-                   name="User.IsActive"
-                   value="true"
-                   @(Model.User.IsActive ? "checked" : "") />
-            <label class="form-check-label" for="User_IsActive">Active</label>
+            <input asp-for="User.IsActive" class="form-check-input" />
+            <label asp-for="User.IsActive" class="form-check-label">Active</label>
         </div>
 
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -42,9 +37,9 @@
         </div>
     </form>
 
-    <hr />
+    <br />
 
-    <h4>Change Password</h4>
+    <h2>Change Password</h2>
     <form asp-action="ChangePassword" asp-controller="Login" method="post" class="form-card">
 
         <input type="hidden" name="UserId" value="@Model.User.Id" />
@@ -69,7 +64,10 @@
                    minlength="6" />
         </div>
 
-        <button type="submit" class="btn btn-warning">Change Password</button>
+        <div class="form-actions">
+            <a asp-action="Index" class="btn btn-secondary">Back</a>
+            <button type="submit" class="btn btn-warning">Change Password</button>
+        </div>
     </form>
 </div>
 

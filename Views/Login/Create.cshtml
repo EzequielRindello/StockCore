@@ -29,13 +29,8 @@
         </div>
 
         <div class="form-check mb-2">
-            <input type="checkbox"
-                   class="form-check-input"
-                   id="User_IsActive"
-                   name="User.IsActive"
-                   value="true"
-                   checked />
-            <label class="form-check-label" for="User_IsActive">Active</label>
+            <input asp-for="User.IsActive" class="form-check-input" />
+            <label asp-for="User.IsActive" class="form-check-label">Active</label>
         </div>
 
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
