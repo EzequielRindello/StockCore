@@ -78,7 +78,7 @@ body {
 }
 
 /* =========================================================
-   NAVBAR (Galicia style)
+   NAVBAR
 ========================================================= */
 .app-navbar {
     background-color: var(--card-bg);
@@ -116,11 +116,46 @@ body {
         background-color: rgba(174, 36, 45, 0.08);
     }
 
-/* User link */
 .user-link {
     display: flex;
     align-items: center;
     gap: 6px;
+}
+
+.navbar-toggle {
+    display: none;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .navbar-nav-left {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background-color: var(--card-bg);
+        box-shadow: var(--shadow-md);
+        z-index: 1050;
+        padding: 8px 0;
+    }
+
+        .navbar-nav-left.show {
+            display: flex;
+        }
+
+        .navbar-nav-left .nav-link {
+            padding: 10px 16px;
+        }
+
+    .navbar-toggle {
+        display: block;
+    }
 }
 
 /* =========================================================
@@ -556,7 +591,7 @@ body {
 }
 
 /* =========================================================
-   ACTION BUTTONS (TOP RIGHT)
+   ACTION BUTTONS
 ========================================================= */
 .actions-btns {
     display: flex;
@@ -992,3 +1027,123 @@ tbody td a {
         color: #fff;
         border-bottom: 1px solid rgba(255,255,255,0.25);
     }
+
+/* =========================================================
+   RESPONSIVE LAYOUT
+========================================================= */
+@media (max-width: 992px) {
+    .products-layout {
+        flex-direction: column;
+    }
+
+        .products-layout .filters {
+            width: 100%;
+            max-height: none;
+            overflow: visible;
+        }
+
+        .products-layout .content {
+            padding: 16px 12px;
+        }
+
+    .actions-btns {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .actions-btns a,
+        .actions-btns button {
+            width: 100%;
+        }
+}
+
+@media (max-width: 576px) {
+    .products-layout .filters {
+        padding: 12px;
+    }
+
+    #filterForm h5 {
+        font-size: 1rem;
+    }
+
+    #filterForm label,
+    #filterForm .form-control,
+    #filterForm .form-select {
+        font-size: 0.875rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+        .form-actions .btn {
+            width: 100%;
+        }
+
+    .form-card {
+        padding: 20px;
+    }
+
+    .form-page {
+        margin: 20px 10px;
+    }
+
+    .form-card textarea.form-control {
+        min-height: 80px;
+    }
+
+    .form-control-search {
+        width: 100%;
+        max-width: none;
+        margin-bottom: 8px;
+    }
+
+    .login-filter-container{
+        flex-direction: column;
+    }
+
+    .form-page {
+        margin: 20px auto;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE TABLES FOR MOBILE
+========================================================= */
+@media (max-width: 576px) {
+    table.table th:not(:first-child):not(:nth-child(2)):not(:last-child),
+    table.table td:not(:first-child):not(:nth-child(2)):not(:last-child) {
+        display: none;
+    }
+
+    table.table {
+        width: 100%;
+       
+        border-collapse: collapse;
+    }
+        table.table td,
+        table.table th {
+            padding: 8px 6px;
+            font-size: 0.875rem;
+        }
+
+            table.table td:last-child a {
+                padding: 4px 8px;
+                font-size: 0.875rem;
+                display: inline-block;
+            }
+
+    tbody tr:hover {
+        transform: translateY(0);
+        box-shadow: var(--shadow-sm);
+    }
+
+    table.table td:nth-child(2) a {
+        display: inline-block;
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
