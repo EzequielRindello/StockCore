@@ -120,17 +120,26 @@ namespace StockCore.Services
 
             try
             {
+                var normalizedEmail = model.Email.Trim().ToLower();
+
                 var existingUser = await _db.Users
-                    .FirstOrDefaultAsync(u => u.Email == model.Email || u.UserName == model.UserName);
+                    .FirstOrDefaultAsync(u =>
+                        u.Email.ToLower() == normalizedEmail ||
+                        u.UserName == model.UserName);
 
                 if (existingUser != null)
                     return (ValidationMessages.ERROR, ValidationMessages.UniqueEmail());
+
+                var hasActiveUsers = await _db.Users.AnyAsync(u => u.IsActive);
+
+                if (!hasActiveUsers && !model.IsActive)
+                    return (ValidationMessages.ERROR, "At least one user must be active");
 
                 var user = new ApplicationUserEntity
                 {
                     Id = Guid.NewGuid().ToString(),
                     UserName = model.UserName,
-                    Email = model.Email,
+                    Email = normalizedEmail,
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
                     IsActive = model.IsActive,
                     EmailConfirmed = false,
@@ -160,15 +169,26 @@ namespace StockCore.Services
                 if (user == null)
                     return (model, ValidationMessages.ERROR, ValidationMessages.NotFound("User"));
 
+                var normalizedEmail = model.Email.Trim().ToLower();
+
                 var existingUser = await _db.Users.FirstOrDefaultAsync(u =>
                     u.Id != model.Id &&
-                    (u.Email == model.Email || u.UserName == model.UserName));
+                    (u.Email.ToLower() == normalizedEmail || u.UserName == model.UserName));
 
                 if (existingUser != null)
                     return (model, ValidationMessages.ERROR, ValidationMessages.UniqueEmail());
 
+                if (user.IsActive && !model.IsActive)
+                {
+                    var activeUsersCount = await _db.Users
+                        .CountAsync(u => u.IsActive && u.Id != model.Id);
+
+                    if (activeUsersCount < 1)
+                        return (model, ValidationMessages.ERROR, "At least one active user must exist");
+                }
+
                 user.UserName = model.UserName;
-                user.Email = model.Email;
+                user.Email = normalizedEmail;
                 user.IsActive = model.IsActive;
 
                 await _db.SaveChangesAsync();

@@ -70,14 +70,26 @@ public class LoginController : Controller
     public async Task<IActionResult> Create(CreateUserViewModel model)
     {
         if (!ModelState.IsValid)
-            return View(model);
+        {
+            return View(new UserFormView
+            {
+                IsEdit = false,
+                User = model.User
+            });
+        }
 
         var (key, message) = await _service.CreateUser(model.User);
 
         if (key == ValidationMessages.ERROR)
         {
+            ModelState.Remove("User.Email");
             ViewBag.ErrorMessage = message;
-            return View(model);
+
+            return View(new UserFormView
+            {
+                IsEdit = false,
+                User = model.User
+            });
         }
 
         TempData["MessageKey"] = key;
@@ -108,10 +120,16 @@ public class LoginController : Controller
     [RequireActiveUser]
     public async Task<IActionResult> Edit(UserFormView model)
     {
-
         ModelState.Remove("User.Password");
         ModelState.Remove("ChangePassword.NewPassword");
         ModelState.Remove("ChangePassword.ConfirmPassword");
+
+        var currentUserId = HttpContext.Session.GetString("UserId");
+
+        if (model.User.Id == currentUserId && !model.User.IsActive)
+        {
+            ModelState.AddModelError("", "You cannot deactivate your own account");
+        }
 
         if (!ModelState.IsValid)
         {
@@ -123,6 +141,7 @@ public class LoginController : Controller
 
         if (key == ValidationMessages.ERROR)
         {
+            ModelState.Remove("User.Email");
             ViewBag.ErrorMessage = message;
             model.IsEdit = true;
             return View(model);
