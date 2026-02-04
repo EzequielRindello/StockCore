@@ -78,7 +78,7 @@ body {
 }
 
 /* =========================================================
-   NAVBAR (Galicia style)
+   NAVBAR
 ========================================================= */
 .app-navbar {
     background-color: var(--card-bg);
@@ -116,11 +116,46 @@ body {
         background-color: rgba(174, 36, 45, 0.08);
     }
 
-/* User link */
 .user-link {
     display: flex;
     align-items: center;
     gap: 6px;
+}
+
+.navbar-toggle {
+    display: none;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .navbar-nav-left {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background-color: var(--card-bg);
+        box-shadow: var(--shadow-md);
+        z-index: 1050;
+        padding: 8px 0;
+    }
+
+        .navbar-nav-left.show {
+            display: flex;
+        }
+
+        .navbar-nav-left .nav-link {
+            padding: 10px 16px;
+        }
+
+    .navbar-toggle {
+        display: block;
+    }
 }
 
 /* =========================================================
@@ -556,7 +591,7 @@ body {
 }
 
 /* =========================================================
-   ACTION BUTTONS (TOP RIGHT)
+   ACTION BUTTONS
 ========================================================= */
 .actions-btns {
     display: flex;
