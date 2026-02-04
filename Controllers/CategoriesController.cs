@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StockCore.Services.Const;
+using System.Text;
 
 public class CategoriesController : Controller
 {
@@ -34,6 +35,7 @@ public class CategoriesController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> Create(CategoryFormView vm)
     {
         if (!ModelState.IsValid)
@@ -55,6 +57,7 @@ public class CategoriesController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> Edit(CategoryFormView vm)
     {
         if (!ModelState.IsValid)
@@ -77,9 +80,22 @@ public class CategoriesController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> DeleteMany(List<int> ids)
     {
         TempData.Merge(await _categoryService.DeleteManyCategories(ids));
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ExportCsv([FromQuery] CategoryFilter filter)
+    {
+        var csv = await _categoryService.ExportCategoriesCsvAsync(filter);
+
+        return File(
+            Encoding.UTF8.GetBytes(csv),
+            "text/csv",
+            "categories.csv"
+        );
     }
 }

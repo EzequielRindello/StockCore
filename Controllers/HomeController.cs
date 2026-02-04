@@ -19,6 +19,7 @@ public class HomeController : Controller
     }
 
     [HttpGet]
+    [RequireActiveUser]
     public async Task<IActionResult> ExportDashboardReport()
     {
         var csv = await _homeService.ExportDashboardReportAsync();

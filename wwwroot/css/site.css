@@ -83,11 +83,11 @@ body {
 .app-navbar {
     background-color: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
-    height: 64px;
+    height: 70px;
 }
 
 .navbar-brand {
-    font-size: 1.15rem;
+    font-size: 1.8rem;
     font-weight: 600;
     color: var(--primary-color);
     letter-spacing: 0.3px;
@@ -98,7 +98,7 @@ body {
     }
 
 .navbar-nav .nav-link {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 500;
     color: var(--text-secondary);
     padding: 8px 12px;
@@ -671,6 +671,7 @@ tbody td a {
 ========================================================= */
 .toast-container {
     margin-top: 2.2%;
+    z-index: 1055;
 }
 
 /* =========================================================

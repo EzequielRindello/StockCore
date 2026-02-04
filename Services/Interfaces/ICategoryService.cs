@@ -7,4 +7,5 @@
     Task<(string, string)> CreateCategory(CategoryForm model);
     Task<(CategoryForm, string, string)> UpdateCategory(CategoryForm model);
     Task<(string, string)> DeleteManyCategories(List<int> ids);
+    Task<string> ExportCategoriesCsvAsync(CategoryFilter filter);
 }

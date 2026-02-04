@@ -24,6 +24,13 @@ public class LoginController : Controller
     }
 
     [HttpPost]
+    public async Task<IActionResult> Filter(UserFilter filter)
+    {
+        var users = await _service.FilterUsers(filter);
+        return PartialView("_UserTable", users);
+    }
+
+    [HttpPost]
     public async Task<IActionResult> Login(string email, string password)
     {
         var result = await _service.AuthenticateUser(email, password);
@@ -59,17 +66,30 @@ public class LoginController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> Create(CreateUserViewModel model)
     {
         if (!ModelState.IsValid)
-            return View(model);
+        {
+            return View(new UserFormView
+            {
+                IsEdit = false,
+                User = model.User
+            });
+        }
 
         var (key, message) = await _service.CreateUser(model.User);
 
         if (key == ValidationMessages.ERROR)
         {
+            ModelState.Remove("User.Email");
             ViewBag.ErrorMessage = message;
-            return View(model);
+
+            return View(new UserFormView
+            {
+                IsEdit = false,
+                User = model.User
+            });
         }
 
         TempData["MessageKey"] = key;
@@ -97,12 +117,19 @@ public class LoginController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> Edit(UserFormView model)
     {
-
         ModelState.Remove("User.Password");
         ModelState.Remove("ChangePassword.NewPassword");
         ModelState.Remove("ChangePassword.ConfirmPassword");
+
+        var currentUserId = HttpContext.Session.GetString("UserId");
+
+        if (model.User.Id == currentUserId && !model.User.IsActive)
+        {
+            ModelState.AddModelError("", "You cannot deactivate your own account");
+        }
 
         if (!ModelState.IsValid)
         {
@@ -114,6 +141,7 @@ public class LoginController : Controller
 
         if (key == ValidationMessages.ERROR)
         {
+            ModelState.Remove("User.Email");
             ViewBag.ErrorMessage = message;
             model.IsEdit = true;
             return View(model);
@@ -125,6 +153,7 @@ public class LoginController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> ChangePassword(ChangePasswordForm model)
     {
 
@@ -192,6 +221,7 @@ public class LoginController : Controller
     }
 
     [HttpPost]
+    [RequireActiveUser]
     public async Task<IActionResult> Delete(string id)
     {
         var currentUserId = HttpContext.Session.GetString("UserId");
@@ -201,13 +231,6 @@ public class LoginController : Controller
         TempData["Message"] = message;
 
         return RedirectToAction("Index");
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Filter(UserFilter filter)
-    {
-        var users = await _service.FilterUsers(filter);
-        return PartialView("_UserTable", users);
     }
 
     [HttpPost]

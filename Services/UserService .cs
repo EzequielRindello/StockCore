@@ -110,35 +110,36 @@ namespace StockCore.Services
 
         public async Task<(string, string)> CreateUser(UserForm model)
         {
-
             if (string.IsNullOrWhiteSpace(model.Password))
-                return (ValidationMessages.ERROR, "Password is required");
+                return (ValidationMessages.ERROR, ValidationMessages.PasswordRequiered);
 
             if (model.Password.Length < 6)
-                return (ValidationMessages.ERROR, "Password must be at least 6 characters");
+                return (ValidationMessages.ERROR, ValidationMessages.InvalidPassword);
 
             await using var tx = await _db.Database.BeginTransactionAsync();
 
             try
             {
+                var normalizedEmail = model.Email.Trim().ToLower();
 
                 var existingUser = await _db.Users
-                    .FirstOrDefaultAsync(u => u.Email == model.Email || u.UserName == model.UserName);
+                    .FirstOrDefaultAsync(u =>
+                        u.Email.ToLower() == normalizedEmail ||
+                        u.UserName == model.UserName);
 
                 if (existingUser != null)
-                {
-                    if (existingUser.Email == model.Email)
-                        return (ValidationMessages.ERROR, "Email already exists");
-                    if (existingUser.UserName == model.UserName)
-                        return (ValidationMessages.ERROR, "Username already exists");
-                }
+                    return (ValidationMessages.ERROR, ValidationMessages.UniqueEmail());
 
+                var hasActiveUsers = await _db.Users.AnyAsync(u => u.IsActive);
+
+                if (!hasActiveUsers && !model.IsActive)
+                    return (ValidationMessages.ERROR, "At least one user must be active");
 
                 var user = new ApplicationUserEntity
                 {
                     Id = Guid.NewGuid().ToString(),
                     UserName = model.UserName,
-                    Email = model.Email,
+                    Email = normalizedEmail,
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
                     IsActive = model.IsActive,
                     EmailConfirmed = false,
@@ -149,13 +150,12 @@ namespace StockCore.Services
                 await _db.SaveChangesAsync();
                 await tx.CommitAsync();
 
-                return (ValidationMessages.SUCCESS, "User created successfully");
+                return (ValidationMessages.SUCCESS, ValidationMessages.CreatedMessage("User"));
             }
-            catch (Exception ex)
+            catch
             {
                 await tx.RollbackAsync();
-
-                return (ValidationMessages.ERROR, $"Error creating user: {ex.Message}");
+                return (ValidationMessages.ERROR, ValidationMessages.ErrorMessage("creating", "user"));
             }
         }
 
@@ -166,113 +166,110 @@ namespace StockCore.Services
             try
             {
                 var user = await _db.Users.FindAsync(model.Id);
-
                 if (user == null)
-                    return (model, ValidationMessages.ERROR, "User not found");
+                    return (model, ValidationMessages.ERROR, ValidationMessages.NotFound("User"));
 
-                var existingUser = await _db.Users
-                    .FirstOrDefaultAsync(u =>
-                        u.Id != model.Id &&
-                        (u.Email == model.Email || u.UserName == model.UserName));
+                var normalizedEmail = model.Email.Trim().ToLower();
+
+                var existingUser = await _db.Users.FirstOrDefaultAsync(u =>
+                    u.Id != model.Id &&
+                    (u.Email.ToLower() == normalizedEmail || u.UserName == model.UserName));
 
                 if (existingUser != null)
+                    return (model, ValidationMessages.ERROR, ValidationMessages.UniqueEmail());
+
+                if (user.IsActive && !model.IsActive)
                 {
-                    if (existingUser.Email == model.Email)
-                        return (model, ValidationMessages.ERROR, "Email already exists");
-                    if (existingUser.UserName == model.UserName)
-                        return (model, ValidationMessages.ERROR, "Username already exists");
+                    var activeUsersCount = await _db.Users
+                        .CountAsync(u => u.IsActive && u.Id != model.Id);
+
+                    if (activeUsersCount < 1)
+                        return (model, ValidationMessages.ERROR, "At least one active user must exist");
                 }
 
-
                 user.UserName = model.UserName;
-                user.Email = model.Email;
+                user.Email = normalizedEmail;
                 user.IsActive = model.IsActive;
 
                 await _db.SaveChangesAsync();
                 await tx.CommitAsync();
 
-                return (model, ValidationMessages.SUCCESS, "User updated successfully");
+                return (model, ValidationMessages.SUCCESS, ValidationMessages.SavedMessage("User"));
             }
-            catch (Exception ex)
+            catch
             {
                 await tx.RollbackAsync();
-                return (model, ValidationMessages.ERROR, $"Error updating user: {ex.Message}");
+                return (model, ValidationMessages.ERROR, ValidationMessages.ErrorMessage("updating", "user"));
             }
         }
 
         public async Task<(string, string)> DeleteUser(string userId, string? currentUserId)
         {
             if (string.IsNullOrWhiteSpace(userId))
-                return (ValidationMessages.ERROR, "Invalid user");
+                return (ValidationMessages.ERROR, ValidationMessages.SelectedMessage("user"));
 
             if (userId == currentUserId)
                 return (ValidationMessages.ERROR, "You cannot delete yourself");
+
+            var user = await _db.Users.FindAsync(userId);
+            if (user == null)
+                return (ValidationMessages.ERROR, ValidationMessages.NotFound("User"));
 
             var usersCount = await _db.Users.CountAsync();
             if (usersCount <= 1)
                 return (ValidationMessages.ERROR, "At least one user must exist");
 
-            var user = await _db.Users.FindAsync(userId);
-            if (user == null)
-                return (ValidationMessages.ERROR, "User not found");
+            var activeUsersCount = await _db.Users.CountAsync(u => u.IsActive && u.Id != userId);
+            if (activeUsersCount < 1)
+                return (ValidationMessages.ERROR, "At least one active user must exist");
 
             try
             {
                 _db.Users.Remove(user);
                 await _db.SaveChangesAsync();
-
-                return (ValidationMessages.SUCCESS, "User deleted successfully");
+                return (ValidationMessages.SUCCESS, ValidationMessages.DeletedMessage("User"));
             }
-            catch (Exception ex)
+            catch
             {
-                return (ValidationMessages.ERROR, $"Error deleting user: {ex.Message}");
+                return (ValidationMessages.ERROR, ValidationMessages.ErrorMessage("deleting", "user"));
             }
         }
 
         public async Task<(string, string)> SendPasswordReset(string userId)
         {
-            try
-            {
-                var user = await _db.Users.FindAsync(userId);
+            var user = await _db.Users.FindAsync(userId);
+            if (user == null)
+                return (ValidationMessages.ERROR, ValidationMessages.NotFound("User"));
 
-                if (user == null)
-                    return (ValidationMessages.ERROR, "User not found");
-
-                // TODO: implement email reset
-
-                return (ValidationMessages.SUCCESS, "Password reset email sent");
-            }
-            catch
-            {
-                return (ValidationMessages.ERROR, "Error sending password reset");
-            }
+            // TODO: email reset
+            return (ValidationMessages.SUCCESS, ValidationMessages.ResetPassword());
         }
 
         public async Task<(string, string)> ChangePassword(string userId, string newPassword)
         {
             if (string.IsNullOrWhiteSpace(newPassword))
-                return (ValidationMessages.ERROR, "Password is required");
+                return (ValidationMessages.ERROR, ValidationMessages.PasswordRequiered);
 
             if (newPassword.Length < 6)
-                return (ValidationMessages.ERROR, "Password must be at least 6 characters");
+                return (ValidationMessages.ERROR, ValidationMessages.InvalidPassword);
 
             try
             {
                 var user = await _db.Users.FindAsync(userId);
-
                 if (user == null)
-                    return (ValidationMessages.ERROR, "User not found");
+                    return (ValidationMessages.ERROR, ValidationMessages.NotFound("User"));
 
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
                 await _db.SaveChangesAsync();
 
-                return (ValidationMessages.SUCCESS, "Password changed successfully");
+                return (ValidationMessages.SUCCESS, ValidationMessages.SavedMessage("Password"));
             }
-            catch (Exception ex)
+            catch
             {
-                return (ValidationMessages.ERROR, $"Error changing password: {ex.Message}");
+                return (ValidationMessages.ERROR, ValidationMessages.ErrorMessage("changing", "password"));
             }
         }
+
 
         public async Task<AuthResult> AuthenticateUser(string email, string password)
         {
@@ -325,6 +322,15 @@ namespace StockCore.Services
                     Message = "An error occurred during authentication"
                 };
             }
+        }
+
+        public async Task<bool> IsUserActive(string userId)
+        {
+            return await _db
+                .Users
+                .Where(u => u.Id == userId)
+                .Select(u => u.IsActive)
+                .FirstOrDefaultAsync();
         }
     }
 }

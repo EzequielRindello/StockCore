@@ -9,5 +9,6 @@
         Task<(string key, string message)> CreateProduct(ProductForm model);
         Task<(ProductForm model, string key, string message)> UpdateProduct(ProductForm model);
         Task<(string key, string message)> DeleteManyProducts(List<int> ids);
+        Task<string> ExportProductsCsvAsync(ProductFilter filter);
     }
 }

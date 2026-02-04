@@ -46,7 +46,7 @@
     <div class="content">
 
         <div class="actions-btns">
-            <button class="btn btn-secondary">
+            <button id="exportCsv" class="btn btn-secondary">
                 <i class="bi bi-filetype-csv"></i> Export CSV
             </button>
             <a asp-action="Create" class="btn btn-danger">
@@ -86,6 +86,11 @@
         document.getElementById("clearFilters").addEventListener("click", () => {
             filterForm.reset();
             loadTable(new FormData());
+        });
+
+        document.getElementById("exportCsv").addEventListener("click", () => {
+            const params = new URLSearchParams(new FormData(filterForm));
+            window.location = "@Url.Action("ExportCsv", "Products")?" + params.toString();
         });
     </script>
 }
