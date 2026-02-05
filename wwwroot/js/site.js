@@ -1,4 +1,45 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+﻿document.addEventListener("DOMContentLoaded", () => {
+
+    const toggles = document.querySelectorAll(".theme-toggle");
+    if (!toggles.length) return;
+
+    const setTheme = (theme) => {
+        const isDark = theme === "dark";
+
+        if (isDark) {
+            document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+            document.documentElement.removeAttribute("data-theme");
+        }
+
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+
+        toggles.forEach(btn => {
+            const icon = btn.querySelector("i");
+            icon.className = isDark
+                ? "bi bi-sun-fill"
+                : "bi bi-moon-fill";
+        });
+    };
+
+    const storedTheme = localStorage.getItem("theme") || "light";
+    setTheme(storedTheme);
+
+    toggles.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const currentTheme =
+                document.documentElement.getAttribute("data-theme") === "dark"
+                    ? "dark"
+                    : "light";
+
+            const nextTheme = currentTheme === "dark" ? "light" : "dark";
+            setTheme(nextTheme);
+        });
+    });
+
+});
+
+document.addEventListener("DOMContentLoaded", function () {
 
     // Toast
     document.querySelectorAll('.toast').forEach(toastEl => {
