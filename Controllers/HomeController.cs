@@ -18,6 +18,12 @@ public class HomeController : Controller
         return Json(data);
     }
 
+    public IActionResult NotFound()
+    {
+        Response.StatusCode = 404;
+        return View("~/Views/Shared/NotFound.cshtml");
+    }
+
     [HttpGet]
     [RequireActiveUser]
     public async Task<IActionResult> ExportDashboardReport()

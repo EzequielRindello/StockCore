@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Page Not Found";
+    Layout = "_Layout";
+}
+
+<div class="not-found-container">
+    <img src="~/images/404.png"
+         class="not-found-image"
+         alt="404 Page Not Found" />
+
+    <h2>Page not found</h2>
+
+    <p>
+        The page you are looking for doesn’t exist or has been moved. <br />
+        If you think this is wrong, please contact an administrator.
+    </p>
+
+    <a asp-controller="Home"
+       asp-action="Index">
+        Go back to home page
+    </a>
+</div>
