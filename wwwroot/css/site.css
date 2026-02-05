@@ -36,6 +36,28 @@
 }
 
 /* =========================================================
+   DARK MODE VARIABLES
+========================================================= */
+[data-theme="dark"] {
+    --body-bg: #0F1115;
+    --card-bg: #171A21;
+    --text-primary: #E6E8EB;
+    --text-secondary: #A1A7B3;
+    --text-light: #7A7F8A;
+    --border-color: #262A33;
+    --hover-bg: rgba(255, 255, 255, 0.06);
+    --table-hover-bg: #1C2028;
+    --sidebar-bg: #141720;
+    --sidebar-input-bg: #1B1F2A;
+    --sidebar-text: #E6E8EB;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+    --sidebar-hover-border: rgba(255, 255, 255, 0.2);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.4);
+    --shadow-md: 0 6px 18px rgba(0,0,0,0.45);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.55);
+}
+
+/* =========================================================
    BASE / RESET
 ========================================================= */
 html {
@@ -149,6 +171,14 @@ body {
     background: none;
     border: none;
     color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.theme-toggle.nav-link {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
     cursor: pointer;
 }
 
@@ -1167,4 +1197,63 @@ tbody td a {
         overflow: hidden;
         text-overflow: ellipsis;
     }
+}
+
+/* =========================================================
+   DARK MODE – FORM CONTROLS
+========================================================= */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] textarea.form-control {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+    [data-theme="dark"] .form-control::placeholder {
+        color: var(--text-light);
+    }
+
+    [data-theme="dark"] .form-control:focus,
+    [data-theme="dark"] .form-select:focus {
+        background-color: var(--card-bg);
+        color: var(--text-primary);
+    }
+
+/* =========================================================
+   DARK MODE – TABLE TEXT
+========================================================= */
+[data-theme="dark"] table tbody td {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] table thead th {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] table tbody tr {
+    background-color: var(--card-bg);
+}
+
+[data-theme="dark"] tbody tr:hover {
+    background-color: var(--table-hover-bg);
+}
+
+[data-theme="dark"] input[type="checkbox"] {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+@media (max-width: 768px) {
+    .mobile-user-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 8px 16px;
+    }
+
+        .mobile-user-actions .nav-link {
+            padding: 8px 0;
+        }
 }

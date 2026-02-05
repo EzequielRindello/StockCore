@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    <script>
+        (function () {
+            const theme = localStorage.getItem("theme");
+            if (theme === "dark") {
+                document.documentElement.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
     <link rel="icon" type="image/png" href="~/favicon.png" />
@@ -11,6 +19,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
+
+    @{
+        var userId = Context.Session.GetString("UserId");
+        var userName = Context.Session.GetString("UserName") ?? "Account";
+    }
 
     <header>
         <nav class="navbar navbar-expand-sm app-navbar px-4">
@@ -38,21 +51,26 @@
                         <a class="nav-link" asp-controller="Stock" asp-action="Index">Stock</a>
                     </li>
 
-                    <li class="nav-item d-sm-none">
-                        @{
-                            var userId = Context.Session.GetString("UserId");
-                            var userName = Context.Session.GetString("UserName") ?? "Account";
-                        }
+                    <li class="nav-item d-sm-none mobile-user-actions">
                         <a class="nav-link user-link"
                            asp-controller="Login"
                            asp-action="Index">
                             <i class="bi bi-person-circle"></i>
                             <span>@(string.IsNullOrEmpty(userId) ? "Login" : userName)</span>
                         </a>
+
+                        <button type="button" class="nav-link theme-toggle">
+                            <i class="bi bi-moon-fill"></i>
+                        </button>
                     </li>
                 </ul>
 
                 <ul class="navbar-nav d-none d-sm-flex">
+                    <li class="nav-item">
+                        <button type="button" class="nav-link theme-toggle">
+                            <i class="bi bi-moon-fill"></i>
+                        </button>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link user-link"
                            asp-controller="Login"
