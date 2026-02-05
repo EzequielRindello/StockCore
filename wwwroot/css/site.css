@@ -78,6 +78,27 @@ body {
 }
 
 /* =========================================================
+   NOT FOUND PAGE
+========================================================= */
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+    .not-found-container p {
+        text-align: center;
+    }
+
+.not-found-image {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+}
+/* =========================================================
    NAVBAR
 ========================================================= */
 .app-navbar {

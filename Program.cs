@@ -40,6 +40,17 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+}
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapFallbackToController("NotFound", "Home");
+app.UseStatusCodePagesWithReExecute("/Home/NotFound");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
