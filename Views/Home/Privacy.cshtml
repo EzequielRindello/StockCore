@@ -1,6 +1,68 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Privacy Policy - StockCore";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="privacy-container">
+    <h1>Privacy Policy</h1>
+    <p><em>Last updated: October 2023</em></p>
+    
+    <h2>Introduction</h2>
+    <p>StockCore is a web-based inventory management system designed for small businesses and teams. As a learning project for CSE 325: .NET Software Development at BYU-Idaho, we prioritize user privacy. This Privacy Policy explains how we collect, use, store, and protect your information when you use our application. By using StockCore, you agree to the practices described here.</p>
+    
+    <h2>Information We Collect</h2>
+    <p>We collect limited information to provide core functionality like inventory tracking and secure login. Types of data include:</p>
+    <ul>
+        <li><strong>Account Information:</strong> When you register or log in, we collect your email address, hashed password, and optional profile details (e.g., name, role). This is used for authentication and session management.</li>
+        <li><strong>Inventory and Business Data:</strong> Details about products (e.g., name, description, price), categories, stock entries (incoming/outgoing), and movement history. This data is entered by you and stored for your use only—it's business-related and not personal unless linked to your account.</li>
+        <li><strong>Technical and Usage Data:</strong> Automatically collected info like IP address, browser type, device info, timestamps, and page interactions. This helps with security, debugging, and improving app performance. Data is anonymized where possible.</li>
+        <li><strong>Cookies and Similar Technologies:</strong> We use essential cookies for session management (e.g., keeping you logged in). No marketing cookies or third-party trackers are used.</li>
+    </ul>
+    <p>We do not collect sensitive personal data (e.g., financial info beyond basic stock tracking) unless you voluntarily provide it.</p>
+    
+    <h2>How We Use Your Information</h2>
+    <p>Your data is used solely to operate and enhance the application:</p>
+    <ul>
+        <li>Provide services: Enable login, product/category management, stock tracking, and history views.</li>
+        <li>Security: Prevent unauthorized access, detect abuse, and log activities (e.g., failed logins).</li>
+        <li>Improvements: Analyze aggregated usage (e.g., most-viewed features) to fix bugs or add functionality—no individual targeting.</li>
+        <li>Compliance: Respond to legal requests if required.</li>
+    </ul>
+    <p>We do <strong>not</strong> sell, rent, or share your personal data with third parties for marketing. Data may be shared with trusted service providers (e.g., Render.com for hosting, Microsoft for SQL Server) under strict contracts ensuring confidentiality.</p>
+    
+    <h2>Data Security</h2>
+    <p>Protecting your data is a priority. We implement industry-standard measures:</p>
+    <ul>
+        <li><strong>Encryption:</strong> All data in transit uses HTTPS/TLS. Passwords are hashed using secure algorithms (e.g., via ASP.NET Identity).</li>
+        <li><strong>Access Controls:</strong> All users have admin-level access in this prototype—use strong passwords. In production, role-based access will be enforced.</li>
+        <li><strong>Storage:</strong> Data is stored in a secure SQL Server database with regular backups. We use GitHub Advanced Security for code scans.</li>
+        <li><strong>Retention:</strong> Account data is kept as long as your account is active. Inventory data is retained until deleted by you. Inactive accounts may be archived after 2 years.</li>
+        <li><strong>Breach Response:</strong> In case of a breach, we'll notify affected users within 72 hours per legal requirements.</li>
+    </ul>
+    
+    <h2>Your Rights and Choices</h2>
+    <p>You have control over your data. Depending on your location (e.g., GDPR in EU, CCPA in California), you may have additional rights:</p>
+    <ul>
+        <li><strong>Access and Update:</strong> View or edit your profile via the app's Profile page.</li>
+        <li><strong>Deletion:</strong> Request account deletion (email us)—this removes personal data but may retain anonymized logs for security.</li>
+        <li><strong>Export:</strong> Download your data (e.g., stock history) via app features or request a portable format.</li>
+        <li><strong>Cookies:</strong> Manage via browser settings—disable non-essential ones, but this may limit functionality.</li>
+        <li><strong>Opt-Out:</strong> No marketing emails yet, but we'll add an unsubscribe if implemented.</li>
+    </ul>
+    <p>To exercise rights, log in and use app tools, or contact us at <a href="mailto:admin@stockcore.com">admin@stockcore.com</a>. We'll respond within 30 days.</p>
+    
+    <h2>Children's Privacy</h2>
+    <p>StockCore is not intended for users under 13 (or 16 in some regions). We do not knowingly collect data from children. If we discover such data, it will be deleted.</p>
+    
+    <h2>Changes to This Policy</h2>
+    <p>We may update this policy to reflect app changes or legal requirements. We'll notify you via email or in-app notice for material changes. Check this page periodically.</p>
+    
+    <h2>Contact Us</h2>
+    <p>Questions? Email <a href="mailto:admin@stockcore.com">admin@stockcore.com</a> or use the app's contact form (future feature). For BYU-Idaho project inquiries, contact the course instructor.</p>
+    
+    <hr />
+    <p class="text-muted"><small>This is a mock policy for educational purposes. In a real app, consult legal experts.</small></p>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
