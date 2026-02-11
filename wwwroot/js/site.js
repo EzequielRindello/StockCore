@@ -110,6 +110,17 @@ document.addEventListener('DOMContentLoaded', () => {
     Dashboard.init(window.dashboardConfig);
 });
 
+document.addEventListener("click", e => {
+    const toggle = e.target.closest(".filters-toggle");
+    if (!toggle) return;
+
+    const filters = document.querySelector(".products-layout .filters");
+    if (!filters) return;
+
+    filters.classList.toggle("is-open");
+    toggle.classList.toggle("open");
+});
+
 const Dashboard = (() => {
 
     let charts = {};
