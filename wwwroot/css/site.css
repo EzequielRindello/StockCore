@@ -1024,13 +1024,25 @@ tbody td a {
 .custom-footer {
     height: 30px;
     background-color: var(--sidebar-bg);
-    color: #ffffff;
-    text-align: center;
-    line-height: 30px;
+    color: var(--sidebar-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     flex-shrink: 0;
     font-size: 0.85rem;
 }
 
+    .custom-footer a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+        .custom-footer a:hover {
+            text-decoration: underline;
+            color: var(--text-light);
+        }
 /* =========================================================
    BOOTSTRAP BUTTON OVERRIDES
 ========================================================= */
@@ -1200,7 +1212,7 @@ tbody td a {
 }
 
 /* =========================================================
-   DARK MODE – FORM CONTROLS
+   DARK MODE FORM CONTROLS
 ========================================================= */
 [data-theme="dark"] .form-control,
 [data-theme="dark"] .form-select,
@@ -1221,7 +1233,7 @@ tbody td a {
     }
 
 /* =========================================================
-   DARK MODE – TABLE TEXT
+   DARK MODE TABLE TEXT
 ========================================================= */
 [data-theme="dark"] table tbody td {
     color: var(--text-primary);
@@ -1374,5 +1386,108 @@ tbody td a {
 
     .modal-content {
         border-radius: 8px;
+    }
+}
+
+/* =========================================================
+   PRIVACY PAGE
+========================================================= */
+.privacy-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.privacy-container h1 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 2.2rem;
+}
+
+.privacy-container h2 {
+    color: var(--text-secondary);
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    border-left: 4px solid var(--primary-color);
+    padding-left: 10px;
+}
+
+.privacy-container ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-bottom: 15px;
+}
+
+.privacy-container li {
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.privacy-container p {
+    margin-bottom: 15px;
+    text-align: justify;
+    color: var(--text-primary);
+}
+
+.privacy-container a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.privacy-container a:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .privacy-container {
+        margin: 10px;
+        padding: 15px;
+        box-shadow: none;
+    }
+
+    .privacy-container h1 {
+        font-size: 1.8rem;
+    }
+
+    .privacy-container h2 {
+        font-size: 1.3rem;
+        border-left: 3px solid var(--primary-color);
+        padding-left: 8px;
+    }
+
+    .privacy-container ul {
+        padding-left: 15px;
+    }
+}
+
+@media print {
+    .privacy-container {
+        box-shadow: none;
+        background: white;
+        color: black;
+        border: none;
+    }
+
+    .privacy-container h1,
+    .privacy-container h2 {
+        color: black;
+        border-color: black;
+    }
+
+    .privacy-container a {
+        color: black;
+        text-decoration: underline;
     }
 }
