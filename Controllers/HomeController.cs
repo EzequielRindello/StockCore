@@ -1,39 +1,47 @@
 using Microsoft.AspNetCore.Mvc;
 
-public class HomeController : Controller
+namespace StockCore.Controllers
 {
-    private readonly IHomeService _homeService;
-
-    public HomeController(IHomeService homeService)
+    public class HomeController : Controller
     {
-        _homeService = homeService;
-    }
+        private readonly IHomeService _homeService;
 
-    public IActionResult Index() => View();
+        public HomeController(IHomeService homeService)
+        {
+            _homeService = homeService;
+        }
 
-    [HttpGet]
-    public async Task<IActionResult> GetDashboardData()
-    {
-        var data = await _homeService.GetDashboardDataAsync();
-        return Json(data);
-    }
+        public IActionResult Index() => View();
 
-    public IActionResult NotFound()
-    {
-        Response.StatusCode = 404;
-        return View("~/Views/Shared/NotFound.cshtml");
-    }
+        public IActionResult Privacy()
+        {
+            return View();
+        }
 
-    [HttpGet]
-    [RequireActiveUser]
-    public async Task<IActionResult> ExportDashboardReport()
-    {
-        var csv = await _homeService.ExportDashboardReportAsync();
+        [HttpGet]
+        public async Task<IActionResult> GetDashboardData()
+        {
+            var data = await _homeService.GetDashboardDataAsync();
+            return Json(data);
+        }
 
-        return File(
-            System.Text.Encoding.UTF8.GetBytes(csv),
-            "text/csv",
-            "dashboard-report.csv"
-        );
+        public IActionResult NotFound()
+        {
+            Response.StatusCode = 404;
+            return View("~/Views/Shared/NotFound.cshtml");
+        }
+
+        [HttpGet]
+        [RequireActiveUser]
+        public async Task<IActionResult> ExportDashboardReport()
+        {
+            var csv = await _homeService.ExportDashboardReportAsync();
+
+            return File(
+                System.Text.Encoding.UTF8.GetBytes(csv),
+                "text/csv",
+                "dashboard-report.csv"
+            );
+        }
     }
 }
