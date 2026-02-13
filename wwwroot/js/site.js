@@ -1,5 +1,26 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
 
+    const helpBtn = document.getElementById("openTourHelp");
+    const startBtn = document.getElementById("startTourBtn");
+    const modalEl = document.getElementById("tourModal");
+
+    if (!helpBtn || !startBtn || !modalEl) return;
+
+    const modal = new bootstrap.Modal(modalEl);
+
+    helpBtn.addEventListener("click", () => modal.show());
+
+    startBtn.addEventListener("click", () => {
+        modal.hide();
+        StockCoreTour.start();
+    });
+
+    StockCoreTour.resumeIfNeeded();
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
     const toggles = document.querySelectorAll(".theme-toggle");
     if (!toggles.length) return;
 
