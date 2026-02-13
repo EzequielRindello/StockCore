@@ -209,6 +209,18 @@ body {
     }
 }
 
+.nav-tour {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .navbar-nav-left .nav-tour {
+        display:none;
+    }
+}
 /* =========================================================
    DASHBOARD
 ========================================================= */
